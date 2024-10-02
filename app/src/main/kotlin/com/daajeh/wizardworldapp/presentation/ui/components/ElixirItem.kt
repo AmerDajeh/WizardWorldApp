@@ -14,11 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.daajeh.wizardworldapp.domain.entity.Elixir
+import com.daajeh.wizardworldapp.domain.entity.LightElixir
 
 
 @Composable
-fun ElixirListItem(elixir: Elixir, onClick: (String) -> Unit) {
+fun ElixirListItem(elixir: LightElixir, onClick: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -37,11 +37,6 @@ fun ElixirListItem(elixir: Elixir, onClick: (String) -> Unit) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Manufacturer: ${elixir.manufacturer}",
-                style = MaterialTheme.typography.bodyMedium
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
                 text = "Difficulty: ${elixir.difficulty}",
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -52,10 +47,9 @@ fun ElixirListItem(elixir: Elixir, onClick: (String) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun ElixirListItemPreview() {
-    val sampleElixir = Elixir(
+    val sampleElixir = LightElixir(
         id = "1",
         name = "Healing Elixir",
-        manufacturer = "Herb Co.",
         difficulty = "Medium"
     )
 

@@ -22,7 +22,8 @@ data class ElixirEntity(
 
     fun toDomain(
         ingredients: List<Ingredient>,
-        inventors: List<Inventor>
+        inventors: List<Inventor>,
+        isFavourite: Boolean = false
     ) =
         Elixir(
             characteristics = this.characteristics,
@@ -34,6 +35,7 @@ data class ElixirEntity(
             manufacturer = this.manufacturer,
             name = this.name,
             sideEffects = this.sideEffects,
-            time = this.time
+            time = this.time,
+            isFavourite = isFavourite
         )
 }

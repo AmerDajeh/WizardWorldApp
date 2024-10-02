@@ -1,10 +1,10 @@
 package com.daajeh.wizardworldapp.presentation.ui.home
 
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daajeh.wizardworldapp.domain.ElixirRepository
 import com.daajeh.wizardworldapp.domain.entity.Elixir
+import com.daajeh.wizardworldapp.domain.entity.LightElixir
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +17,7 @@ class ElixirsViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ScopeViewModel() {
     private val repository by scope.inject<ElixirRepository>()
-    val elixirs: StateFlow<List<Elixir>> =
+    val elixirs: StateFlow<List<LightElixir>> =
         repository
             .getElixirs()
             .stateIn(
@@ -43,6 +43,12 @@ class ElixirsViewModel(
     fun load(elixirId: String){
         viewModelScope.launch {
             savedStateHandle["elixir_id"] = elixirId
+        }
+    }
+
+    fun toggleElixirFavouriteState(elixirId: String) {
+        viewModelScope.launch {
+            // todo
         }
     }
 }

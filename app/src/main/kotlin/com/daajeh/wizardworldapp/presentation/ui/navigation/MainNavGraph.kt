@@ -41,7 +41,8 @@ fun MainNavGraph(
             val elixir by homeViewModel.elixir.collectAsStateWithLifecycle()
 
             ElixirDetailsScreen(
-                elixir = elixir  // Show details of the selected elixir
+                elixir = elixir,
+                onToggleFavourite = homeViewModel::toggleElixirFavouriteState
             )
         }
     }

@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import com.daajeh.wizardworldapp.data.local.dto.ElixirEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ElixirDao {
@@ -11,8 +12,5 @@ interface ElixirDao {
     suspend fun insert(elixir: ElixirEntity)
 
     @Query("SELECT * FROM elixirs WHERE id=:elixirId")
-    suspend fun getElixirById(elixirId: String): ElixirEntity
-
-    @Query("SELECT * FROM elixirs")
-    suspend fun getAllElixirs(): List<ElixirEntity>
+    fun getElixirById(elixirId: String): Flow<ElixirEntity>
 }

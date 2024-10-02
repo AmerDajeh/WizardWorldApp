@@ -10,5 +10,6 @@ data class Elixir(
     val manufacturer: String = "",
     val name: String = "",
     val sideEffects: String = "",
-    val time: String = ""
+    val time: String = "",
+    val isFavourite: Boolean = false
 )

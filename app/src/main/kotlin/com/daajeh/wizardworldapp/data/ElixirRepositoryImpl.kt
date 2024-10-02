@@ -1,59 +1,62 @@
 package com.daajeh.wizardworldapp.data
 
 import com.daajeh.wizardworldapp.data.local.WizardWorldDatabase
+import com.daajeh.wizardworldapp.data.local.dto.FavouriteElixirEntity
 import com.daajeh.wizardworldapp.domain.ElixirRepository
 import com.daajeh.wizardworldapp.domain.entity.Elixir
-import com.daajeh.wizardworldapp.domain.entity.Ingredient
-import com.daajeh.wizardworldapp.domain.entity.Inventor
+import com.daajeh.wizardworldapp.domain.entity.LightElixir
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 class ElixirRepositoryImpl(
     private val database: WizardWorldDatabase
-): ElixirRepository {
+) : ElixirRepository {
 
-    override fun getElixirs(): Flow<List<Elixir>> =
-        flowOf(listOf( Elixir(
-            characteristics = "Restores health and boosts energy",
-            difficulty = "Medium",
-            effect = "Healing and energy boost",
-            id = "1",
-            ingredients = listOf(
-                Ingredient(id = "1", name = "Herb"),
-                Ingredient(id = "2", name = "Magic Water")
-            ),
-            inventors = listOf(
-                Inventor(firstName = "John", lastName = "Doe", id = "1"),
-                Inventor(firstName = "Jane", lastName = "Smith", id = "2")
-            ),
-            manufacturer = "Herb Co.",
-            name = "Healing Elixir",
-            sideEffects = "Mild nausea",
-            time = "5 minutes"
-        )))
+    override fun getElixirs(): Flow<List<LightElixir>> =
+        database
+            .lightElixirDao()
+            .getByDifficulty("")
+            .map { elixirsList ->
+                elixirsList.map { elixir ->
+                    elixir.toDomain(
+                        database.favouriteElixirDao().isFavourite(elixir.id)
+                    )
+                }
+            }
+
+
     override fun getElixirById(elixirId: String): Flow<Elixir?> =
-        if (elixirId == "1")
-            flowOf(
-                Elixir(
-                    characteristics = "Restores health and boosts energy",
-                    difficulty = "Medium",
-                    effect = "Healing and energy boost",
-                    id = "1",
-                    ingredients = listOf(
-                        Ingredient(id = "1", name = "Herb"),
-                        Ingredient(id = "2", name = "Magic Water")
-                    ),
-                    inventors = listOf(
-                        Inventor(firstName = "John", lastName = "Doe", id = "1"),
-                        Inventor(firstName = "Jane", lastName = "Smith", id = "2")
-                    ),
-                    manufacturer = "Herb Co.",
-                    name = "Healing Elixir",
-                    sideEffects = "Mild nausea",
-                    time = "5 minutes"
+        database
+            .elixirDao()
+            .getElixirById(elixirId)
+            .map { elixir ->
+                val ingredients = database.ingredientDao().getIngredientsForElixir(elixirId)
+                    .map { it.toDomain() }
+                val inventors = database.inventorDao().getInventorsForElixir(elixirId)
+                    .map { it.toDomain() }
+                val isFavourite = database.favouriteElixirDao().isFavourite(elixirId)
+
+                elixir.toDomain(
+                    ingredients = ingredients,
+                    inventors = inventors,
+                    isFavourite = isFavourite
                 )
-            )
-    else
-        emptyFlow()
+            }
+
+
+    override suspend fun saveFavourite(elixirId: String) =
+        database
+            .elixirDao()
+            .getElixirById(elixirId)
+            .let {
+                val favourite = FavouriteElixirEntity(elixirId)
+                database.favouriteElixirDao()
+                    .save(favourite)
+            }
+
+
+    override suspend fun removeFavourite(elixirId: String) =
+        database
+            .favouriteElixirDao()
+            .remove(elixirId)
 }
