@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">WizardWorldApp</string>
+    <string name="elixir_list">Elixir List</string>
+    <string name="elixir_details">Elixir Details</string>
 </resources>

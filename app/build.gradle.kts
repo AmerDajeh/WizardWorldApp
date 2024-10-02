@@ -55,6 +55,9 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation(libs.koin.android)
+    implementation(libs.koin.androidx.startup)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.compose.viewmodel.navigation)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)

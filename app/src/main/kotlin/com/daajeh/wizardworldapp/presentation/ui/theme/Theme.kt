@@ -1,4 +1,4 @@
-package com.daajeh.wizardworldapp.ui.theme
+package com.daajeh.wizardworldapp.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build
