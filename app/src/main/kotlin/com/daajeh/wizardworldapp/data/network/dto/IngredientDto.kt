@@ -1,6 +1,6 @@
 package com.daajeh.wizardworldapp.data.network.dto
 
-import com.daajeh.wizardworldapp.data.local.dto.IngredientEntity
+import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ingredient.IngredientEntity
 import kotlinx.serialization.Serializable
 
 @Serializable

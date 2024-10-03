@@ -1,6 +1,6 @@
 package com.daajeh.wizardworldapp.data.network.dto
 
-import com.daajeh.wizardworldapp.data.local.dto.ElixirEntity
+import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ElixirEntity
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,9 +16,10 @@ data class ElixirDto(
     val sideEffects: String = "",
     val time: String = ""
 ) {
-    fun toEntity() =
+    fun toEntity(wizardId: String) =
         ElixirEntity(
             id = id,
+            wizardId = wizardId,
             characteristics = characteristics,
             difficulty = difficulty,
             effect = effect,

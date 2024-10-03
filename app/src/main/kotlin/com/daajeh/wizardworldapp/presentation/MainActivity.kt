@@ -9,14 +9,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.daajeh.wizardworldapp.presentation.ui.navigation.MainNavGraph
-import com.daajeh.wizardworldapp.presentation.ui.home.ElixirsViewModel
+import com.daajeh.wizardworldapp.presentation.ui.home.WizardsViewModel
 import com.daajeh.wizardworldapp.presentation.ui.theme.WizardWorldAppTheme
 import org.koin.androidx.compose.KoinAndroidContext
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val homeViewModel by viewModel<ElixirsViewModel>()
+    private val homeViewModel by viewModel<WizardsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

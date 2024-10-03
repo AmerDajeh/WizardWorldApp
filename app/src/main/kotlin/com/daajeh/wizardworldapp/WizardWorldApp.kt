@@ -2,6 +2,7 @@ package com.daajeh.wizardworldapp
 
 import android.app.Application
 import com.daajeh.wizardworldapp.di.appModule
+import com.daajeh.wizardworldapp.di.networkModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androix.startup.KoinStartup.onKoinStartup
@@ -13,7 +14,7 @@ class WizardWorldApp: Application() {
         onKoinStartup {
             androidLogger()
             androidContext(this@WizardWorldApp)
-            modules(appModule)
+            modules(networkModule, appModule)
         }
     }
 }

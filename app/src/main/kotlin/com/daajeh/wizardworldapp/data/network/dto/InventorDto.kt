@@ -1,6 +1,6 @@
 package com.daajeh.wizardworldapp.data.network.dto
 
-import com.daajeh.wizardworldapp.data.local.dto.InventorEntity
+import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.inventor.InventorEntity
 import kotlinx.serialization.Serializable
 
 @Serializable

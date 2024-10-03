@@ -6,9 +6,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.daajeh.wizardworldapp.data.local.dao.ElixirDao
 import com.daajeh.wizardworldapp.data.local.dao.IngredientDao
 import com.daajeh.wizardworldapp.data.local.dao.InventorDao
-import com.daajeh.wizardworldapp.data.local.dto.ElixirEntity
-import com.daajeh.wizardworldapp.data.local.dto.IngredientEntity
-import com.daajeh.wizardworldapp.data.local.dto.InventorEntity
+import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ElixirEntity
+import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ingredient.IngredientEntity
+import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.inventor.InventorEntity
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before

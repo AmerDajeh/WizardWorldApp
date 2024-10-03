@@ -1,4 +1,4 @@
-package com.daajeh.wizardworldapp.data.local.dto
+package com.daajeh.wizardworldapp.data.local.dto.wizard.elixir
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -11,6 +11,7 @@ import kotlinx.serialization.Serializable
 @Entity(tableName = "elixirs")
 data class ElixirEntity(
     @PrimaryKey val id: String,
+    val wizardId: String,
     val characteristics: String = "",
     val difficulty: String = "",
     val effect: String = "",

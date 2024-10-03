@@ -3,8 +3,7 @@ package com.daajeh.wizardworldapp.presentation.ui.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.daajeh.wizardworldapp.domain.ElixirRepository
-import com.daajeh.wizardworldapp.domain.entity.Elixir
-import com.daajeh.wizardworldapp.domain.entity.LightElixir
+import com.daajeh.wizardworldapp.domain.entity.Wizard
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -13,13 +12,13 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.koin.androidx.scope.ScopeViewModel
 
-class ElixirsViewModel(
+class WizardsViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ScopeViewModel() {
     private val repository by scope.inject<ElixirRepository>()
-    val elixirs: StateFlow<List<LightElixir>> =
+    val wizards: StateFlow<List<Wizard>> =
         repository
-            .getElixirs()
+            .getWizards()
             .stateIn(
                 viewModelScope,
                 SharingStarted.WhileSubscribed(5_000),
@@ -28,11 +27,11 @@ class ElixirsViewModel(
 
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val elixir: StateFlow<Elixir?> =
-        savedStateHandle.getStateFlow("elixir_id", "")
+    val wizard: StateFlow<Wizard?> =
+        savedStateHandle.getStateFlow("wizard_id", "")
             .flatMapLatest {
                 repository
-                    .getElixirById(it)
+                    .getWizardById(it)
             }
             .stateIn(
                 viewModelScope,
@@ -40,15 +39,24 @@ class ElixirsViewModel(
                 null
             )
 
-    fun load(elixirId: String){
+    fun load(wizardId: String) {
         viewModelScope.launch {
-            savedStateHandle["elixir_id"] = elixirId
+            savedStateHandle["wizard_id"] = wizardId
         }
     }
 
-    fun toggleElixirFavouriteState(elixirId: String) {
+    fun toggleWizardFavouriteState() {
         viewModelScope.launch {
-            // todo
+            wizard.value?.let { wizard ->
+                when {
+                    wizard.isFavorite ->
+                        repository.removeFavouriteWizard(wizard.id)
+
+                    else ->
+                        repository
+                            .saveFavouriteWizard(wizard.id)
+                }
+            }
         }
     }
 }

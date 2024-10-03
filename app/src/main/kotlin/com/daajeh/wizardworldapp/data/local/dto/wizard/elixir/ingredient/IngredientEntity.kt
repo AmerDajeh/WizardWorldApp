@@ -1,4 +1,4 @@
-package com.daajeh.wizardworldapp.data.local.dto
+package com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ingredient
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
