@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.koin.androidx.startup)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.compose.viewmodel.navigation)
+    implementation(libs.koin.androidx.workmanager)
 
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
@@ -68,6 +69,9 @@ dependencies {
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.logging)
     implementation(libs.ktor.serialization.kotlinx.json)
+
+    implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.work.gcm)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

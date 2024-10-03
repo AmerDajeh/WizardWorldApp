@@ -3,8 +3,11 @@ package com.daajeh.wizardworldapp
 import android.app.Application
 import com.daajeh.wizardworldapp.di.appModule
 import com.daajeh.wizardworldapp.di.networkModule
+import com.daajeh.wizardworldapp.di.workModule
+import com.daajeh.wizardworldapp.work.UpdateDataWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.androix.startup.KoinStartup.onKoinStartup
 
 class WizardWorldApp: Application() {
@@ -14,7 +17,13 @@ class WizardWorldApp: Application() {
         onKoinStartup {
             androidLogger()
             androidContext(this@WizardWorldApp)
-            modules(networkModule, appModule)
+            workManagerFactory()
+            modules(networkModule, appModule, workModule)
         }
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        UpdateDataWorker.enqueue(this)
     }
 }

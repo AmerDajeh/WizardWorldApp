@@ -10,4 +10,7 @@ interface WizardRepository {
 
     suspend fun saveFavouriteWizard(wizardId: String)
     suspend fun removeFavouriteWizard(wizardId: String)
+
+    suspend fun fetchNetworkData(): Result<Unit>
+    suspend fun fetchWizardNetworkData(wizardId: String): Result<Unit>
 }

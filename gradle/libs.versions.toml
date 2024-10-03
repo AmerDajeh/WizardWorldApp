@@ -52,6 +52,7 @@ koin-android = { group = "io.insert-koin", name="koin-android", version.ref="koi
 koin-compose-viewmodel-navigation = { group = "io.insert-koin", name="koin-compose-viewmodel-navigation", version.ref="koin" }
 koin-androidx-compose = { group = "io.insert-koin", name="koin-androidx-compose", version.ref="koin" }
 koin-androidx-startup = { group = "io.insert-koin", name="koin-androidx-startup", version.ref="koin" }
+koin-androidx-workmanager = { group = "io.insert-koin", name="koin-androidx-workmanager", version.ref="koin" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

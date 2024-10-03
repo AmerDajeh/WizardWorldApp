@@ -10,5 +10,4 @@ interface ElixirRepository {
 
     suspend fun saveFavouriteElixir(elixirId: String)
     suspend fun removeFavouriteElixir(elixirId: String)
-//    suspend fun isFavouriteElixir(elixirId: String): Boolean
 }

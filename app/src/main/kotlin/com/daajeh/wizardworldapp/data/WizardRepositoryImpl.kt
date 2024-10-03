@@ -75,4 +75,12 @@ class WizardRepositoryImpl(
     override suspend fun removeFavouriteWizard(wizardId: String)  =
         dao
             .removeFavourite(wizardId)
+
+    override suspend fun fetchNetworkData(): Result<Unit> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun fetchWizardNetworkData(wizardId: String): Result<Unit> {
+        TODO("Not yet implemented")
+    }
 }
