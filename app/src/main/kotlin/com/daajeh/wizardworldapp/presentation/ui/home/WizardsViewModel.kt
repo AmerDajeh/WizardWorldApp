@@ -3,6 +3,7 @@ package com.daajeh.wizardworldapp.presentation.ui.home
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.daajeh.wizardworldapp.domain.ElixirRepository
+import com.daajeh.wizardworldapp.domain.WizardRepository
 import com.daajeh.wizardworldapp.domain.entity.Wizard
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,9 +16,10 @@ import org.koin.androidx.scope.ScopeViewModel
 class WizardsViewModel(
     private val savedStateHandle: SavedStateHandle
 ) : ScopeViewModel() {
-    private val repository by scope.inject<ElixirRepository>()
+    private val wizardRepository by scope.inject<WizardRepository>()
+    private val elixirRepository by scope.inject<ElixirRepository>()
     val wizards: StateFlow<List<Wizard>> =
-        repository
+        wizardRepository
             .getWizards()
             .stateIn(
                 viewModelScope,
@@ -30,7 +32,7 @@ class WizardsViewModel(
     val wizard: StateFlow<Wizard?> =
         savedStateHandle.getStateFlow("wizard_id", "")
             .flatMapLatest {
-                repository
+                wizardRepository
                     .getWizardById(it)
             }
             .stateIn(
@@ -50,10 +52,10 @@ class WizardsViewModel(
             wizard.value?.let { wizard ->
                 when {
                     wizard.isFavorite ->
-                        repository.removeFavouriteWizard(wizard.id)
+                        wizardRepository.removeFavouriteWizard(wizard.id)
 
                     else ->
-                        repository
+                        wizardRepository
                             .saveFavouriteWizard(wizard.id)
                 }
             }

@@ -1,16 +1,14 @@
 package com.daajeh.wizardworldapp.domain
 
-import com.daajeh.wizardworldapp.domain.entity.Wizard
-import kotlinx.coroutines.flow.Flow
+import com.daajeh.wizardworldapp.data.network.dto.LightElixirDto
+import com.daajeh.wizardworldapp.domain.entity.LightElixir
 
 interface ElixirRepository {
 
-    fun getWizards(): Flow<List<Wizard>>
-    fun getWizardById(wizardId: String): Flow<Wizard?>
+    suspend fun saveWizardLightElixirs(wizardId: String, elixirs: List<LightElixirDto>)
+    suspend fun getWizardLightElixirs(wizardId: String): List<LightElixir>
 
     suspend fun saveFavouriteElixir(elixirId: String)
     suspend fun removeFavouriteElixir(elixirId: String)
-
-    suspend fun saveFavouriteWizard(wizardId: String)
-    suspend fun removeFavouriteWizard(wizardId: String)
+//    suspend fun isFavouriteElixir(elixirId: String): Boolean
 }
