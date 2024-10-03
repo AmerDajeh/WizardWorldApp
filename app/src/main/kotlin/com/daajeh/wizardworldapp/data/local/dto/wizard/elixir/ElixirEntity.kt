@@ -37,6 +37,6 @@ data class ElixirEntity(
             name = this.name,
             sideEffects = this.sideEffects,
             time = this.time,
-            isFavourite = isFavourite
+            isFavorite = isFavourite
         )
 }

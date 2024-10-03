@@ -44,11 +44,19 @@ fun MainNavGraph(
 
         composable(Screen.WizardDetails.route) {
             val wizard by homeViewModel.wizard.collectAsStateWithLifecycle()
+            val elixir by homeViewModel.elixir.collectAsStateWithLifecycle()
 
             WizardDetailsScreen(
                 wizard = wizard,
-                onToggleFavourite = homeViewModel::toggleWizardFavouriteState,
-                onBackClick = { navController.popBackStack() }
+                elixir = elixir,
+                onLoadElixir = homeViewModel::loadElixir,
+                onBottomSheetClosed = { homeViewModel.loadElixir("") },
+                onToggleFavouriteWizard = homeViewModel::toggleWizardFavouriteState,
+                onToggleFavouriteElixir = homeViewModel::toggleElixirFavouriteState,
+                onBackClick = {
+                    homeViewModel.load("")
+                    navController.popBackStack()
+                }
             )
         }
     }

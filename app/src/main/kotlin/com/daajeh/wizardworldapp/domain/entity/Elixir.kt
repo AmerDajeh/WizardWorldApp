@@ -11,5 +11,5 @@ data class Elixir(
     val name: String = "",
     val sideEffects: String = "",
     val time: String = "",
-    val isFavourite: Boolean = false
+    val isFavorite: Boolean = false
 )

@@ -21,6 +21,9 @@ interface ElixirDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertLight(elixir: LightElixirEntity)
 
+    @Query("SELECT * FROM light_elixirs WHERE id=:elixirId")
+    fun getLightElixirById(elixirId: String): LightElixirEntity?
+
     @Query("SELECT * FROM light_elixirs WHERE wizardId=:wizardId")
     suspend fun getLightElixirsForWizard(wizardId: String): List<LightElixirEntity>
 

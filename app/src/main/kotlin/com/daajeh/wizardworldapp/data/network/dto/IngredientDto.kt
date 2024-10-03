@@ -6,12 +6,12 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class IngredientDto(
     val id: String = "",
-    val name: String = ""
+    val name: String? = ""
 ) {
     fun toEntity(elixirId: String) =
         IngredientEntity(
             id = id,
-            name= name,
+            name= name ?: "",
             elixirId = elixirId
         )
 }

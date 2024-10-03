@@ -31,6 +31,16 @@ val workModule = module {
             database.elixirDao()
         }
 
+        scoped {
+            val database: WizardWorldDatabase = get()
+            database.ingredientDao()
+        }
+
+        scoped {
+            val database: WizardWorldDatabase = get()
+            database.inventorDao()
+        }
+
         scopedOf(::WizardRepositoryImpl) {
             bind<WizardRepository>()
         }
@@ -51,6 +61,16 @@ val workModule = module {
         scoped {
             val database: WizardWorldDatabase = get()
             database.elixirDao()
+        }
+
+        scoped {
+            val database: WizardWorldDatabase = get()
+            database.ingredientDao()
+        }
+
+        scoped {
+            val database: WizardWorldDatabase = get()
+            database.inventorDao()
         }
 
         scopedOf(::WizardRepositoryImpl) {
