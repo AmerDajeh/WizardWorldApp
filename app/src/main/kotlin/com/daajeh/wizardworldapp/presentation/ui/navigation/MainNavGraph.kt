@@ -35,6 +35,7 @@ fun MainNavGraph(
             WizardsScreen(
                 wizards = wizards,  // Use actual data from ViewModel
                 details = { wizardId ->
+                    homeViewModel.load(wizardId)
                     FetchWizardDataWorker.enqueue(context, wizardId)
                     navController.navigate(Screen.WizardDetails.route)
                 }

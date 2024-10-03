@@ -18,6 +18,7 @@ class WizardsViewModel(
 ) : ScopeViewModel() {
     private val wizardRepository by scope.inject<WizardRepository>()
     private val elixirRepository by scope.inject<ElixirRepository>()
+
     val wizards: StateFlow<List<Wizard>> =
         wizardRepository
             .getWizards()
