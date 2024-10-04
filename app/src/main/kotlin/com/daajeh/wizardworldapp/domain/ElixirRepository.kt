@@ -14,4 +14,6 @@ interface ElixirRepository {
 
     suspend fun saveFavouriteElixir(elixirId: String)
     suspend fun removeFavouriteElixir(elixirId: String)
+
+    suspend fun fetchElixirNetworkData(elixirId: String): Result<Unit>
 }

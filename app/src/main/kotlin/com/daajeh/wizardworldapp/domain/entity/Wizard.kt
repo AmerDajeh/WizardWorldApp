@@ -1,10 +1,10 @@
 package com.daajeh.wizardworldapp.domain.entity
 
 data class Wizard(
-    val elixirs: List<LightElixir>,
-    val firstName: String,
-    val id: String,
-    val lastName: String,
+    val elixirs: List<LightElixir> = listOf(),
+    val firstName: String = "",
+    val id: String = "",
+    val lastName: String = "",
     val isFavorite: Boolean = false
 ) {
 

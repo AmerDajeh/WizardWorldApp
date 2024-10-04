@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.daajeh.wizardworldapp.domain.entity.Elixir
 import com.daajeh.wizardworldapp.domain.entity.LightElixir
 import com.daajeh.wizardworldapp.domain.entity.Wizard
-import com.daajeh.wizardworldapp.presentation.ui.sheet.ElixirSheet
+import com.daajeh.wizardworldapp.presentation.ui.details.sheet.ElixirSheet
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -13,12 +13,11 @@ import kotlinx.coroutines.flow.map
 class WizardRepositoryImpl(
     private val api: WizardWorldApi,
     private val dao: WizardDao,
-    private val elixirRepository: ElixirRepository
+    private val elixirRepository: ElixirRepository,
 ) : WizardRepository {
 
     override fun getWizards(): Flow<List<Wizard>> =
-        dao
-            .getWizards()
+        dao.getWizards()
             .map { wizardsList ->
                 wizardsList.map { wizard ->
                     val isFavourite = dao.isFavourite(wizard.id)
@@ -62,15 +61,19 @@ class WizardRepositoryImpl(
             .removeFavourite(wizardId)
 
     override suspend fun fetchNetworkData(): Result<Unit> {
-        api
-            .getWizards()
-            .onSuccess {
-                it.forEach { wizard ->
-                    dao.insert(wizard.toEntity())
-                    elixirRepository.saveWizardLightElixirs(wizard.id, wizard.elixirs)
+        // todo: enhance
+        return if (dao.getWizards().first().isEmpty()) {
+            api
+                .getWizards()
+                .onSuccess {
+                    it.forEach { wizard ->
+                        dao.insert(wizard.toEntity())
+                        elixirRepository.saveWizardLightElixirs(wizard.id, wizard.elixirs)
+                    }
                 }
-            }
-        return Result.success(Unit)
+            return Result.success(Unit)
+        } else
+            Result.success(Unit)
     }
 
     override suspend fun fetchWizardNetworkData(wizardId: String): Result<Unit> {
@@ -83,6 +86,7 @@ class WizardRepositoryImpl(
                 isFavourite = dao.isFavourite(wizardId)
             )
 
+        // todo
         return Result.success(Unit)
     }
 }

@@ -11,12 +11,13 @@ import androidx.navigation.compose.rememberNavController
 import com.daajeh.wizardworldapp.presentation.ui.details.WizardDetailsScreen
 import com.daajeh.wizardworldapp.presentation.ui.home.WizardsScreen
 import com.daajeh.wizardworldapp.presentation.ui.home.WizardsViewModel
+import com.daajeh.wizardworldapp.work.FetchElixirDataWorker
 import com.daajeh.wizardworldapp.work.FetchWizardDataWorker
 
 @Composable
 fun MainNavGraph(
     modifier: Modifier = Modifier,
-    homeViewModel: WizardsViewModel,
+    viewModel: WizardsViewModel,
     startDestination: Screen = Screen.ElixirList
 ) {
     val context = LocalContext.current
@@ -30,12 +31,14 @@ fun MainNavGraph(
         startDestination = startDestination.route
     ) {
         composable(Screen.ElixirList.route) {
-            val wizards by homeViewModel.wizards.collectAsStateWithLifecycle()
+            val wizards by viewModel.wizards.collectAsStateWithLifecycle()
+            val error by viewModel.error.collectAsStateWithLifecycle()
 
             WizardsScreen(
                 wizards = wizards,  // Use actual data from ViewModel
+                error = error,
                 details = { wizardId ->
-                    homeViewModel.load(wizardId)
+                    viewModel.load(wizardId)
                     FetchWizardDataWorker.enqueue(context, wizardId)
                     navController.navigate(Screen.WizardDetails.route)
                 }
@@ -43,18 +46,20 @@ fun MainNavGraph(
         }
 
         composable(Screen.WizardDetails.route) {
-            val wizard by homeViewModel.wizard.collectAsStateWithLifecycle()
-            val elixir by homeViewModel.elixir.collectAsStateWithLifecycle()
+            val wizard by viewModel.wizard.collectAsStateWithLifecycle()
+            val elixir by viewModel.elixir.collectAsStateWithLifecycle()
 
             WizardDetailsScreen(
                 wizard = wizard,
                 elixir = elixir,
-                onLoadElixir = homeViewModel::loadElixir,
-                onBottomSheetClosed = { homeViewModel.loadElixir("") },
-                onToggleFavouriteWizard = homeViewModel::toggleWizardFavouriteState,
-                onToggleFavouriteElixir = homeViewModel::toggleElixirFavouriteState,
+                onLoadElixir = { elixirId ->
+                    FetchElixirDataWorker.enqueue(context, elixirId)
+                    viewModel.loadElixir(elixirId)
+                },
+                onBottomSheetClosed = { viewModel.loadElixir("") },
+                onToggleFavouriteWizard = viewModel::toggleWizardFavouriteState,
+                onToggleFavouriteElixir = viewModel::toggleElixirFavouriteState,
                 onBackClick = {
-                    homeViewModel.load("")
                     navController.popBackStack()
                 }
             )
