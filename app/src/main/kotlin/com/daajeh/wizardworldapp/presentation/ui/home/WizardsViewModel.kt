@@ -10,8 +10,10 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class WizardsViewModel(
     private val networkStatusProvider: NetworkStatusProvider,
@@ -23,11 +25,15 @@ class WizardsViewModel(
     val wizards: StateFlow<List<Wizard>> =
         wizardRepository
             .getWizards()
-            .onEach { fetchedWizards ->
-                if (fetchedWizards.isEmpty()) {
+            .onStart {
+                viewModelScope.launch {
                     if (!networkStatusProvider.isNetworkAvailable())
                         error.update { "" }
                 }
+            }
+            .onEach { fetchedWizards ->
+                if (fetchedWizards.isNotEmpty())
+                    error.update { null }
             }
             .catch { exception -> error.update { exception.message ?: "something went wrong." } }
             .stateIn(

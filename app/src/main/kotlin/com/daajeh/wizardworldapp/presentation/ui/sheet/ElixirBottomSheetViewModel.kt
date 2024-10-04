@@ -29,8 +29,7 @@ class ElixirBottomSheetViewModel(
     val elixir: StateFlow<Elixir?> =
         elixirRepository.getElixirById(elixirId)
             .onEach { fetchedElixir ->
-                // Check sheet data only if there's no elixir yet and the ID is valid
-                fetchedElixir ?: launchElixirCheckingJob()
+                fetchedElixir.also { error.update { null } } ?: launchElixirCheckingJob()
             }
             .stateIn(
                 viewModelScope,

@@ -32,25 +32,19 @@ fun SharedTransitionScope.WizardsScreen(
     error: String?,
     details: (String) -> Unit
 ) {
-    var showError by remember { mutableStateOf(false) }
-
     when {
-        showError && error != null ->
-            DeviceOfflineError(modifier = Modifier.fillMaxSize())
-
-        wizards.isEmpty() ->
-            Loading()
-
-        else ->
+        wizards.isNotEmpty() ->
             WizardsContent(
                 animatedVisibilityScope = animatedVisibilityScope,
                 wizards = wizards,
                 onElixirClick = details
             )
-    }
-    LaunchedEffect(wizards){
-        delay(3_000)
-        showError = wizards.isEmpty() && error != null
+
+        error != null ->
+            DeviceOfflineError(modifier = Modifier.fillMaxSize())
+
+        else ->
+            Loading()
     }
 }
 
