@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class ElixirBottomSheetViewModel(
@@ -44,8 +45,7 @@ class ElixirBottomSheetViewModel(
                     delay(2_00)
                     if (!available) {
                         // Only update error message if elixir is still null and no network
-                        error.value =
-                            "Device is offline. Please try again when you have a connection."
+                        elixir.value ?: error.update { "" }
                     }
                 }
             }

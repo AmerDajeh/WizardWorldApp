@@ -1,10 +1,13 @@
 package com.daajeh.wizardworldapp.presentation.ui.navigation
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalBottomSheetProperties
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,7 +27,7 @@ import com.daajeh.wizardworldapp.presentation.ui.sheet.ElixirBottomSheetViewMode
 import com.daajeh.wizardworldapp.work.FetchElixirDataWorker
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
 fun MainNavGraph(
     modifier: Modifier = Modifier,
@@ -35,68 +38,82 @@ fun MainNavGraph(
         rememberNavController()
     val wizardsViewModel: WizardsViewModel = koinViewModel()
 
-    NavHost(
-        modifier = modifier,
-        navController = navController,
-        startDestination = startDestination.route
-    ) {
-        composable(Screen.ElixirList.route) {
-            val wizards by wizardsViewModel.wizards.collectAsStateWithLifecycle()
-            val error by wizardsViewModel.error.collectAsStateWithLifecycle()
+    SharedTransitionLayout {
+        NavHost(
+            modifier = modifier,
+            navController = navController,
+            startDestination = startDestination.route
+        ) {
+            composable(Screen.ElixirList.route) {
+                val wizards by wizardsViewModel.wizards.collectAsStateWithLifecycle()
+                val error by wizardsViewModel.error.collectAsStateWithLifecycle()
 
-            WizardsScreen(
-                wizards = wizards,
-                error = error,
-                details = { wizardId ->
-                    navController.navigate(Screen.WizardDetails.route.plus("/$wizardId"))
-                }
-            )
-        }
-
-        composable(Screen.WizardDetails.route.plus("/{wizardId}")) {
-            val viewModel: WizardDetailsViewModel = koinViewModel<WizardDetailsViewModel>(scope = wizardsViewModel.scope)
-
-            val wizard by viewModel.wizard.collectAsStateWithLifecycle()
-
-            WizardDetailsScreen(
-                wizard = wizard,
-                onToggleFavouriteWizard = viewModel::toggleWizardFavouriteState,
-                onBackClick = {
-                    navController.popBackStack()
-                },
-                navigateToBottomSheet = { elixirId ->
-                    FetchElixirDataWorker.enqueue(context, elixirId)
-                    navController.navigate(Screen.ElixirSheet.route.plus("/$elixirId"))
-                }
-            )
-        }
-
-        dialog(Screen.ElixirSheet.route.plus("/{elixirId}")) {
-            val bottomSheetState = rememberModalBottomSheetState()
-            val viewModel: ElixirBottomSheetViewModel = koinViewModel(scope = wizardsViewModel.scope)
-
-            val elixir by viewModel.elixir.collectAsStateWithLifecycle()
-            val error by viewModel.error.collectAsStateWithLifecycle()
-
-            ModalBottomSheet(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .fillMaxWidth(),
-                onDismissRequest = {
-                    navController.popBackStack()
-                },
-                sheetState = bottomSheetState,
-                properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true)
-
-            ) {
-                ElixirBottomSheet(
-                    elixir = elixir,
+                WizardsScreen(
+                    animatedVisibilityScope = this,
+                    wizards = wizards,
                     error = error,
-                    onToggleFavorite = viewModel::toggleElixirFavouriteState
+                    details = { wizardId ->
+                        navController.navigate(Screen.WizardDetails.route.plus("/$wizardId"))
+                    }
                 )
+            }
+
+            composable(Screen.WizardDetails.route.plus("/{wizardId}")) {
+                val viewModel: WizardDetailsViewModel = koinViewModel<WizardDetailsViewModel>(scope = wizardsViewModel.scope)
+
+                val wizard by viewModel.wizard.collectAsStateWithLifecycle()
+
+                WizardDetailsScreen(
+                    animatedVisibilityScope = this,
+                    nullableWizard = wizard,
+                    onToggleFavoriteWizard = viewModel::toggleWizardFavouriteState,
+                    onBackClick = {
+                        navController.popBackStack()
+                    },
+                    navigateToBottomSheet = { elixirId ->
+                        FetchElixirDataWorker.enqueue(context, elixirId)
+                        navController.navigate(Screen.ElixirSheet.route.plus("/$elixirId"))
+                    }
+                )
+            }
+
+            dialog(Screen.ElixirSheet.route.plus("/{elixirId}")) {
+                val viewModel: ElixirBottomSheetViewModel = koinViewModel(scope = wizardsViewModel.scope)
+
+                val elixir by viewModel.elixir.collectAsStateWithLifecycle()
+                val error by viewModel.error.collectAsStateWithLifecycle()
+
+                val bottomSheetState =
+                    rememberModalBottomSheetState(
+                        confirmValueChange = { state ->
+                            when(state){
+                                SheetValue.Expanded -> elixir != null
+                                else -> true
+                            }
+                        }
+                    )
+
+                ModalBottomSheet(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .fillMaxWidth(),
+                    onDismissRequest = {
+                        navController.popBackStack()
+                    },
+                    sheetState = bottomSheetState,
+                    properties = ModalBottomSheetProperties(shouldDismissOnBackPress = true)
+
+                ) {
+                    ElixirBottomSheet(
+                        elixir = elixir,
+                        error = error,
+                        onToggleFavorite = viewModel::toggleElixirFavouriteState
+                    )
+                }
             }
         }
     }
+
 }
 
 

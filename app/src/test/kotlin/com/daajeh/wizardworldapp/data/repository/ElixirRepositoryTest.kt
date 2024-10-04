@@ -70,7 +70,6 @@ class ElixirRepositoryTest {
         coEvery { mockkElixirDao.isFavourite(elixir.id) } returns  true
 
         elixirRepository = ElixirRepositoryImpl(
-            api = mockkApi,
             dao = mockkElixirDao,
             ingredientDao = mockkIngredientDao,
             inventorDao = mockkInventorDao
@@ -94,7 +93,6 @@ class ElixirRepositoryTest {
         coEvery { mockkElixirDao.saveFavourite(FavouriteElixirEntity(elixir.id)) } just Runs
 
         elixirRepository = ElixirRepositoryImpl(
-            api = mockkApi,
             dao = mockkElixirDao,
             ingredientDao = mockkIngredientDao,
             inventorDao = mockkInventorDao
@@ -111,7 +109,6 @@ class ElixirRepositoryTest {
         coEvery { mockkElixirDao.removeFavourite(elixir.id) } just Runs
 
         elixirRepository = ElixirRepositoryImpl(
-            api = mockkApi,
             dao = mockkElixirDao,
             ingredientDao = mockkIngredientDao,
             inventorDao = mockkInventorDao

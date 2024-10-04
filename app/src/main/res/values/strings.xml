@@ -16,4 +16,5 @@
     <string name="ingredients">Ingredients</string>
     <string name="inventors">Inventors</string>
     <string name="device_is_offline_try_again_when_you_have_connection">device is offline, try again when you have connection.</string>
+    <string name="wizard">Wizard</string>
 </resources>

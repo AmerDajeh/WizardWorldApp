@@ -2,6 +2,9 @@ package com.daajeh.wizardworldapp.presentation.ui.details
 
 import android.R.drawable
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -19,9 +23,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,11 +44,14 @@ import androidx.compose.ui.unit.dp
 import com.daajeh.wizardworldapp.R
 import com.daajeh.wizardworldapp.domain.entity.LightElixir
 import com.daajeh.wizardworldapp.domain.entity.Wizard
+import com.daajeh.wizardworldapp.presentation.ui.home.components.WizardIcon
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun WizardDetailsScreen(
-    wizard: Wizard?,
-    onToggleFavouriteWizard: () -> Unit,
+fun SharedTransitionScope.WizardDetailsScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    nullableWizard: Wizard?,
+    onToggleFavoriteWizard: () -> Unit,
     onBackClick: () -> Unit,
     navigateToBottomSheet: (String) -> Unit
 ) {
@@ -51,15 +59,35 @@ fun WizardDetailsScreen(
         onBackClick()
     }
 
-    wizard?.let {
-        WizardDetails(
-            wizard = it,
-            onToggleFavouriteWizard = onToggleFavouriteWizard,
-            onLoadElixir = navigateToBottomSheet
-        )
+    nullableWizard?.let { wizard ->
+        var isFavorite by remember { mutableStateOf(wizard.isFavorite) }
+        Scaffold (
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        isFavorite = !isFavorite
+                        onToggleFavoriteWizard()
+                    },
+                    content = {
+                        Icon(
+                            painter = if (isFavorite) painterResource(id = drawable.btn_star_big_on)
+                            else painterResource(id = drawable.btn_star_big_off),
+                            contentDescription = stringResource(R.string.favorite),
+                            tint = if (isFavorite) Color.Yellow else Color.Gray
+                        )
+                    }
+                )
+            }
+        ){
+            WizardDetails(
+                modifier = Modifier.padding(it),
+                animatedVisibilityScope = animatedVisibilityScope,
+                wizard = wizard,
+                onLoadElixir = navigateToBottomSheet
+            )
+        }
     } ?: ItemNotFound(onBackClick = onBackClick)
 }
-
 
 
 @Composable
@@ -89,13 +117,14 @@ private fun ItemNotFound(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun WizardDetails(
+fun SharedTransitionScope.WizardDetails(
+    modifier: Modifier = Modifier,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     wizard: Wizard,
-    onToggleFavouriteWizard: () -> Unit,
     onLoadElixir: (String) -> Unit
 ) {
-    var isFavorite by remember { mutableStateOf(wizard.isFavorite) }
     var openBottomSheet by remember { mutableStateOf(false) }
 
     Column(
@@ -108,6 +137,11 @@ fun WizardDetails(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
+                .sharedElement(
+                    state = rememberSharedContentState("wizard-${wizard.id}"),
+                    animatedVisibilityScope = animatedVisibilityScope
+                ).background(MaterialTheme.colorScheme.surfaceContainerHighest, MaterialTheme.shapes.small)
+                .padding(vertical = 16.dp, horizontal = 8.dp)
         ) {
             Text(
                 text = "${wizard.firstName} ${wizard.lastName}",
@@ -115,20 +149,15 @@ fun WizardDetails(
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.weight(1f)
             )
-            // Favorite Icon
-            IconButton(
-                onClick = {
-                    onToggleFavouriteWizard()
-                    isFavorite = !isFavorite
-                }
-            ) {
-                Icon(
-                    painter = if (isFavorite) painterResource(id = drawable.btn_star_big_on)
-                    else painterResource(id = drawable.btn_star_big_off),
-                    contentDescription = stringResource(R.string.favorite),
-                    tint = if (isFavorite) Color.Yellow else Color.Gray
-                )
-            }
+
+
+            WizardIcon(
+                modifier = Modifier
+                    .sharedElement(
+                        state = rememberSharedContentState("image-${wizard.id}"),
+                        animatedVisibilityScope = animatedVisibilityScope
+                    ).size(96.dp)
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -195,8 +224,8 @@ fun TraitChip(trait: String) {
 fun ElixirItem(elixir: LightElixir, onClick: () -> Unit) {
     ElevatedCard(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+            .padding(vertical = 4.dp)
+            .padding(end = 36.dp),
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHighest),
         onClick = onClick
@@ -204,17 +233,54 @@ fun ElixirItem(elixir: LightElixir, onClick: () -> Unit) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
+//            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Add content for the Elixir item
             Text(
                 text = elixir.name,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f)
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.weight(1f).padding(top = 12.dp)
             )
+
+            ElixirIcon()
         }
     }
 }
+
+@Composable
+private fun ElixirIcon(
+    modifier: Modifier = Modifier
+){
+    val color = remember { getRandomModernColor() }
+    Icon(
+        modifier = modifier,
+        painter = painterResource(R.drawable.ic_elixir),
+        contentDescription = stringResource(R.string.elixirs),
+        tint = color
+    )
+}
+
+fun getRandomModernColor(): Color {
+    val modernColors = listOf(
+        Color(0xFF6A0572),  // Deep Purple
+        Color(0xFF3A86FF),  // Vivid Blue
+        Color(0xFFF77F00),  // Deep Orange
+        Color(0xFFFFD166),  // Soft Yellow
+        Color(0xFF06D6A0),  // Modern Teal
+        Color(0xFFEF476F),  // Vibrant Pink
+        Color(0xFFA0C4FF),  // Light Blue
+        Color(0xFF8338EC),  // Purple
+        Color(0xFFFB5607),  // Bright Orange
+        Color(0xFFFF006E),  // Hot Pink
+        Color(0xFF06B2E3),  // Aqua Blue
+        Color(0xFFD4E157),  // Light Green
+        Color(0xFF889EAF),  // Muted Blue-Grey
+        Color(0xFF8D99AE)   // Soft Grey
+    )
+
+    return modernColors.random()
+}
+
 
 // Preview Function
 @Preview(showBackground = true)
@@ -232,15 +298,16 @@ fun WizardDetailsPreview() {
         )
     )
 
-    WizardDetailsScreen(
-        wizard = sampleWizard,
-        onToggleFavouriteWizard = {},
-//        onLoadElixir = {},
-//        elixir = null,
-//        sheetError = null,
-//        onBottomSheetClosed = { },
-//        onToggleFavouriteElixir = { },
-        onBackClick = { },
-        {}
-    )
+//    WizardDetailsScreen(
+//        ,
+//        wizard = sampleWizard,
+//        onToggleFavouriteWizard = {},
+////        onLoadElixir = {},
+////        elixir = null,
+////        sheetError = null,
+////        onBottomSheetClosed = { },
+////        onToggleFavouriteElixir = { },
+//        onBackClick = { },
+//        {}
+//    )
 }

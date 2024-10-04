@@ -1,5 +1,8 @@
 package com.daajeh.wizardworldapp.presentation.ui.home
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,8 +24,10 @@ import com.daajeh.wizardworldapp.domain.entity.Wizard
 import com.daajeh.wizardworldapp.presentation.ui.home.components.WizardList
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun WizardsScreen(
+fun SharedTransitionScope.WizardsScreen(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     wizards: List<Wizard>,
     error: String?,
     details: (String) -> Unit
@@ -38,6 +43,7 @@ fun WizardsScreen(
 
         else ->
             WizardsContent(
+                animatedVisibilityScope = animatedVisibilityScope,
                 wizards = wizards,
                 onElixirClick = details
             )
@@ -65,12 +71,15 @@ fun Loading() {
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-private fun WizardsContent(
+private fun SharedTransitionScope.WizardsContent(
+    animatedVisibilityScope: AnimatedVisibilityScope,
     wizards: List<Wizard>,
     onElixirClick: (String) -> Unit
 ) {
     WizardList(
+        animatedVisibilityScope = animatedVisibilityScope,
         wizards = wizards,
         onItemClick = onElixirClick
     )
