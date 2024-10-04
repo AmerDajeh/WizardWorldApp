@@ -10,8 +10,8 @@ import com.daajeh.wizardworldapp.domain.ElixirRepository
 import com.daajeh.wizardworldapp.domain.entity.Elixir
 import com.daajeh.wizardworldapp.domain.entity.LightElixir
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 
 class ElixirRepositoryImpl(
     private val api: WizardWorldApi,
@@ -22,20 +22,19 @@ class ElixirRepositoryImpl(
 
     override fun getElixirById(elixirId: String): Flow<Elixir?> =
         dao.getElixirById(elixirId)
-            .map {
-                it?.let { entity ->
-                    val ingredients = ingredientDao.getIngredientsForElixir(entity.id)
-                        .map { it.toDomain() }
-                    val inventors = inventorDao.getInventorsForElixir(entity.id)
-                        .map { it.toDomain() }
-
+            .combine(ingredientDao.getIngredientsForElixir(elixirId)) { nullableElixir, ingredients ->
+                Pair(nullableElixir, ingredients)
+            }
+            .combine(inventorDao.getInventorsForElixir(elixirId)) { (nullableElixir, ingredients), inventors ->
+                nullableElixir?.let { entity ->
                     entity.toDomain(
-                        ingredients = ingredients,
-                        inventors = inventors,
+                        ingredients = ingredients.map { it.toDomain() },
+                        inventors = inventors.map { it.toDomain() },
                         isFavourite = dao.isFavourite(entity.id)
                     )
                 }
             }
+
 
     override suspend fun saveWizardLightElixirs(wizardId: String, elixirs: List<LightElixirDto>) {
         elixirs.map { it.toEntity(wizardId) }

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.inventor.InventorEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface InventorDao {
@@ -12,5 +13,5 @@ interface InventorDao {
     suspend fun insert(inventor: InventorEntity)
 
     @Query("SELECT * FROM inventors WHERE elixirId = :elixirId")
-    suspend fun getInventorsForElixir(elixirId: String): List<InventorEntity>
+    fun getInventorsForElixir(elixirId: String): Flow<List<InventorEntity>>
 }

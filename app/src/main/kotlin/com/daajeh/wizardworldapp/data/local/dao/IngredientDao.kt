@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ingredient.IngredientEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface IngredientDao {
@@ -12,5 +13,5 @@ interface IngredientDao {
     suspend fun insert(ingredient: IngredientEntity)
 
     @Query("SELECT * FROM ingredients WHERE elixirId = :elixirId")
-    suspend fun getIngredientsForElixir(elixirId: String): List<IngredientEntity>
+    fun getIngredientsForElixir(elixirId: String): Flow<List<IngredientEntity>>
 }
