@@ -41,9 +41,6 @@ class ElixirRepositoryTest {
     @MockK
     private lateinit var mockkInventorDao: InventorDao
 
-    @MockK
-    private lateinit var mockkApi: WizardWorldApi
-
     private val elixir =
         ElixirEntity(id = "1", "")
 
@@ -91,6 +88,7 @@ class ElixirRepositoryTest {
     fun `test save favorite elixir`() = runTest {
         coEvery { mockkElixirDao.getById(elixir.id) } returns flowOf(elixir)
         coEvery { mockkElixirDao.saveFavourite(FavouriteElixirEntity(elixir.id)) } just Runs
+        coEvery { mockkElixirDao.isFavourite(elixir.id) } returns false
 
         elixirRepository = ElixirRepositoryImpl(
             dao = mockkElixirDao,

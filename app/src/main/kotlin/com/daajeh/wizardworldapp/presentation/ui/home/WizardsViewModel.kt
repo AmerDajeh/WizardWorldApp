@@ -1,5 +1,6 @@
 package com.daajeh.wizardworldapp.presentation.ui.home
 
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daajeh.wizardworldapp.data.network.NetworkStatusProvider
 import com.daajeh.wizardworldapp.domain.WizardRepository
@@ -11,12 +12,11 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import org.koin.androidx.scope.ScopeViewModel
 
-class WizardsViewModel : ScopeViewModel() {
-
-    private val networkStatusProvider: NetworkStatusProvider by scope.inject()
-    private val wizardRepository: WizardRepository  by scope.inject()
+class WizardsViewModel(
+    private val networkStatusProvider: NetworkStatusProvider,
+    wizardRepository: WizardRepository
+) : ViewModel() {
 
     val error = MutableStateFlow<String?>(null)
 

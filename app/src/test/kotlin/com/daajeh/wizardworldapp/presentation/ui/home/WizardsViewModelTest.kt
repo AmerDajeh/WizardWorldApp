@@ -22,8 +22,8 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Rule
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -72,7 +72,9 @@ class WizardsViewModelTest {
         every { wizardRepository.getWizards() } returns flowOf(emptyList())
         coEvery { networkStatusProvider.isNetworkAvailable() } returns false
 
-        viewModel = WizardsViewModel(        )
+        viewModel = WizardsViewModel(
+            networkStatusProvider, wizardRepository
+        )
 
         backgroundScope.launch(UnconfinedTestDispatcher(dispatcher.scheduler)) {
             viewModel.wizards.collect {}
@@ -86,12 +88,12 @@ class WizardsViewModelTest {
 
     @Test
     fun testNetworkStatusCheckNOErrorWhenOfflineAndCacheAvailable() = runTest {
-        every { savedStateHandle.getStateFlow(any(), "") } returns MutableStateFlow("")
         every { wizardRepository.getWizards() } returns flowOf(wizardsList)
         coEvery { networkStatusProvider.isNetworkAvailable() } returns false
 
-        viewModel = WizardsViewModel( )
-
+        viewModel = WizardsViewModel(
+            networkStatusProvider, wizardRepository
+        )
         backgroundScope.launch(UnconfinedTestDispatcher(dispatcher.scheduler)) {
             viewModel.wizards.collect {}
         }
@@ -99,6 +101,6 @@ class WizardsViewModelTest {
         dispatcher.scheduler.advanceUntilIdle()
 
         assertTrue(viewModel.wizards.value.isNotEmpty())
-        assertEquals(null, viewModel.error.value)
+        assertNull(viewModel.error.value)
     }
 }

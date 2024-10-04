@@ -13,14 +13,14 @@ import com.daajeh.wizardworldapp.presentation.ui.home.WizardsViewModel
 import com.daajeh.wizardworldapp.presentation.ui.theme.WizardWorldAppTheme
 import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.androidx.scope.activityScope
 import org.koin.androidx.scope.createActivityScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.scope.Scope
 
 class MainActivity : ComponentActivity(), AndroidScopeComponent {
 
-    override val scope: Scope
-        get() = createActivityScope()
+    override val scope: Scope by activityScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,7 +30,8 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
                 WizardWorldAppTheme {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         MainNavGraph(
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier.padding(innerPadding),
+                            mainActivity = this
                         )
                     }
                 }

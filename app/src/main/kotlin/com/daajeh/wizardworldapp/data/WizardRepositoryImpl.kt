@@ -50,16 +50,11 @@ class WizardRepositoryImpl(
             .let {
                 val isFavorite = dao.isFavourite(wizardId)
                 if (isFavorite)
-                    dao.removeFavourite(wizardId)
+                    dao.removeFavorite(wizardId)
                 else {
                     val favourite = FavouriteWizardEntity(wizardId)
                     dao
                         .saveFavourite(favourite)
                 }
             }
-
-
-    override suspend fun removeFavorite(wizardId: String) =
-        dao
-            .removeFavourite(wizardId)
 }

@@ -4,7 +4,6 @@ import com.daajeh.wizardworldapp.data.WizardRepositoryImpl
 import com.daajeh.wizardworldapp.data.local.dao.WizardDao
 import com.daajeh.wizardworldapp.data.local.dto.favourite.FavouriteWizardEntity
 import com.daajeh.wizardworldapp.data.local.dto.wizard.WizardEntity
-import com.daajeh.wizardworldapp.data.network.WizardWorldApi
 import com.daajeh.wizardworldapp.data.network.dto.WizardDto
 import com.daajeh.wizardworldapp.domain.ElixirRepository
 import com.daajeh.wizardworldapp.domain.WizardRepository
@@ -38,9 +37,6 @@ class WizardRepositoryTest {
 
     @MockK
     private lateinit var mockkDao: WizardDao
-
-    @MockK
-    private lateinit var mockkApi: WizardWorldApi
 
     private val wizardsEntityList = listOf(
         WizardEntity(id = "1", firstName = "Harry", lastName = "Potter"),
@@ -120,7 +116,7 @@ class WizardRepositoryTest {
     @Test
     fun `test save favourite wizard`() = runTest {
         val wizard = wizardsEntityList.first()
-
+        coEvery { mockkDao.isFavourite(wizard.id) } returns false
         every { mockkDao.getById(wizard.id) } returns flowOf(wizard)
         coEvery { mockkDao.saveFavourite(FavouriteWizardEntity(wizard.id)) } just Runs
 
@@ -139,15 +135,14 @@ class WizardRepositoryTest {
     fun `test remove favourite wizard`() = runTest {
         val wizard = wizardsEntityList.first()
 
-        coEvery { mockkDao.removeFavourite(wizard.id) } just Runs
-
+        coEvery { mockkDao.removeFavorite(wizard.id) } just Runs
         wizardRepository = WizardRepositoryImpl(
             dao = mockkDao,
             elixirRepository = mockkElixirRepository
         )
 
-        wizardRepository.removeFavorite(wizard.id)
+        mockkDao.removeFavorite(wizard.id)
 
-        coVerify(exactly = 1) { mockkDao.removeFavourite(any()) }
+        coVerify(exactly = 1) { mockkDao.removeFavorite(any()) }
     }
 }

@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import com.daajeh.wizardworldapp.presentation.MainActivity
 import com.daajeh.wizardworldapp.presentation.ui.details.WizardDetailsScreen
 import com.daajeh.wizardworldapp.presentation.ui.details.WizardDetailsViewModel
 import com.daajeh.wizardworldapp.presentation.ui.home.WizardsScreen
@@ -31,12 +32,12 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun MainNavGraph(
     modifier: Modifier = Modifier,
-    startDestination: Screen = Screen.ElixirList
+    startDestination: Screen = Screen.ElixirList,
+    mainActivity: MainActivity
 ) {
     val context = LocalContext.current
     val navController =
         rememberNavController()
-    val wizardsViewModel: WizardsViewModel = koinViewModel()
 
     SharedTransitionLayout {
         NavHost(
@@ -45,6 +46,8 @@ fun MainNavGraph(
             startDestination = startDestination.route
         ) {
             composable(Screen.ElixirList.route) {
+                val wizardsViewModel: WizardsViewModel = koinViewModel(scope = mainActivity.scope)
+
                 val wizards by wizardsViewModel.wizards.collectAsStateWithLifecycle()
                 val error by wizardsViewModel.error.collectAsStateWithLifecycle()
 
@@ -59,7 +62,7 @@ fun MainNavGraph(
             }
 
             composable(Screen.WizardDetails.route.plus("/{wizardId}")) {
-                val viewModel: WizardDetailsViewModel = koinViewModel<WizardDetailsViewModel>(scope = wizardsViewModel.scope)
+                val viewModel: WizardDetailsViewModel = koinViewModel<WizardDetailsViewModel>(scope = mainActivity.scope)
 
                 val wizard by viewModel.wizard.collectAsStateWithLifecycle()
 
@@ -78,7 +81,7 @@ fun MainNavGraph(
             }
 
             dialog(Screen.ElixirSheet.route.plus("/{elixirId}")) {
-                val viewModel: ElixirBottomSheetViewModel = koinViewModel(scope = wizardsViewModel.scope)
+                val viewModel: ElixirBottomSheetViewModel = koinViewModel(scope = mainActivity.scope)
 
                 val elixir by viewModel.elixir.collectAsStateWithLifecycle()
                 val error by viewModel.error.collectAsStateWithLifecycle()

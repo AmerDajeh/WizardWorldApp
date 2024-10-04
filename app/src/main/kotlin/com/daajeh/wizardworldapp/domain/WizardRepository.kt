@@ -9,5 +9,4 @@ interface WizardRepository {
     fun getWizardById(wizardId: String): Flow<Wizard?>
 
     suspend fun toggleFavorite(wizardId: String)
-    suspend fun removeFavorite(wizardId: String)
 }

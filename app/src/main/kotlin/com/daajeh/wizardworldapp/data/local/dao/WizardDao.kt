@@ -24,7 +24,7 @@ interface WizardDao {
     suspend fun saveFavourite(elixir: FavouriteWizardEntity)
 
     @Query("DELETE FROM favourite_wizards WHERE id=:wizardId")
-    suspend fun removeFavourite(wizardId: String)
+    suspend fun removeFavorite(wizardId: String)
 
     @Query("SELECT EXISTS(SELECT * FROM favourite_wizards WHERE id = :wizardId)")
     suspend fun isFavourite(wizardId: String): Boolean

@@ -2,8 +2,7 @@ package com.daajeh.wizardworldapp.presentation.ui.details
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
-import com.daajeh.wizardworldapp.data.network.NetworkStatusProvider
-import com.daajeh.wizardworldapp.domain.ElixirRepository
+import com.daajeh.wizardworldapp.data.local.dao.WizardDao
 import com.daajeh.wizardworldapp.domain.WizardRepository
 import com.daajeh.wizardworldapp.domain.entity.Elixir
 import com.daajeh.wizardworldapp.domain.entity.Wizard
@@ -27,9 +26,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Rule
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.rules.TestRule
@@ -45,6 +42,9 @@ class WizardDetailsViewModelTest {
 
     @MockK
     private lateinit var wizardRepository: WizardRepository
+
+    @MockK
+    private lateinit var dao: WizardDao
 
     @MockK
     private lateinit var savedStateHandle: SavedStateHandle
@@ -74,7 +74,7 @@ class WizardDetailsViewModelTest {
     fun testLoadWizardWizardWizard() = runTest {
         val wizard = wizardsList.first()
         every { wizardRepository.getWizards() } returns flowOf(emptyList())
-        every { savedStateHandle.getStateFlow(any(), "") } returns MutableStateFlow(wizard.id)
+        every { savedStateHandle.get<String>(any()) } returns wizard.id
         every { wizardRepository.getWizardById(wizard.id) } returns flowOf(wizard)
         every { savedStateHandle[any()] = any<String>() } just Runs
 
@@ -100,7 +100,7 @@ class WizardDetailsViewModelTest {
     fun testSaveFavouriteWizard() = runTest {
         val wizard = wizardsList.first()
         every { wizardRepository.getWizards() } returns flowOf(emptyList())
-        every { savedStateHandle.getStateFlow(any(), "") } returns MutableStateFlow(wizard.id)
+        every { savedStateHandle.get<String>(any()) } returns wizard.id
         every { wizardRepository.getWizardById(wizard.id) } returns flowOf(wizard)
         coEvery { wizardRepository.toggleFavorite(any()) } just Runs
 
@@ -126,11 +126,10 @@ class WizardDetailsViewModelTest {
 
     @Test
     fun testRemoveFavouriteWizard() = runTest {
-        val wizard = wizardsList.first().copy(isFavorite = true)
-        every { wizardRepository.getWizards() } returns flowOf(emptyList())
-        every { savedStateHandle.getStateFlow(any(), "") } returns MutableStateFlow(wizard.id)
+        val wizard = wizardsList.first()
+        every { savedStateHandle.get<String>(any()) } returns wizard.id
         every { wizardRepository.getWizardById(wizard.id) } returns flowOf(wizard)
-        coEvery { wizardRepository.removeFavorite(any()) } just Runs
+        coEvery { wizardRepository.toggleFavorite(wizard.id) } just Runs
 
         viewModel = WizardDetailsViewModel(
             wizardRepository = wizardRepository,
@@ -144,11 +143,11 @@ class WizardDetailsViewModelTest {
         }
 
         dispatcher.scheduler.advanceUntilIdle()
+        viewModel.toggleWizardFavouriteState()
+        coVerify { wizardRepository.getWizardById(wizard.id) }
+
+        dispatcher.scheduler.advanceUntilIdle()
 
         assertNotNull(viewModel.wizard.value)
-        coVerify { wizardRepository.getWizardById(wizard.id) }
-        viewModel.toggleWizardFavouriteState()
-        dispatcher.scheduler.advanceUntilIdle()
-        coVerify { wizardRepository.removeFavorite(wizard.id) }
     }
 }

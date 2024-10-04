@@ -8,6 +8,7 @@ import com.daajeh.wizardworldapp.data.local.WizardWorldDatabase
 import com.daajeh.wizardworldapp.data.network.NetworkStatusProvider
 import com.daajeh.wizardworldapp.domain.ElixirRepository
 import com.daajeh.wizardworldapp.domain.WizardRepository
+import com.daajeh.wizardworldapp.presentation.MainActivity
 import com.daajeh.wizardworldapp.presentation.ui.details.WizardDetailsViewModel
 import com.daajeh.wizardworldapp.presentation.ui.home.WizardsViewModel
 import com.daajeh.wizardworldapp.presentation.ui.sheet.ElixirBottomSheetViewModel
@@ -19,9 +20,8 @@ import org.koin.dsl.module
 val appModule = module {
     single { provideDatabase(get()) }
 
-    viewModelOf(::WizardsViewModel)
 
-    scope<WizardsViewModel> {
+    scope<MainActivity> {
         scopedOf(::NetworkStatusProvider)
 
         scoped {
@@ -52,6 +52,7 @@ val appModule = module {
             bind<ElixirRepository>()
         }
 
+        viewModelOf(::WizardsViewModel)
         viewModelOf(::WizardDetailsViewModel)
         viewModelOf(::ElixirBottomSheetViewModel)
     }
