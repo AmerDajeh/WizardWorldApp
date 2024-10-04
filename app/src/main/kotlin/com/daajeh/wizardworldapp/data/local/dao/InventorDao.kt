@@ -13,5 +13,5 @@ interface InventorDao {
     suspend fun insert(inventor: InventorEntity)
 
     @Query("SELECT * FROM inventors WHERE elixirId = :elixirId")
-    fun getInventorsForElixir(elixirId: String): Flow<List<InventorEntity>>
+    fun getForElixir(elixirId: String): Flow<List<InventorEntity>>
 }

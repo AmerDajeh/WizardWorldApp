@@ -8,8 +8,8 @@ interface WizardRepository {
     fun getWizards(): Flow<List<Wizard>>
     fun getWizardById(wizardId: String): Flow<Wizard?>
 
-    suspend fun saveFavouriteWizard(wizardId: String)
-    suspend fun removeFavouriteWizard(wizardId: String)
+    suspend fun saveFavorite(wizardId: String)
+    suspend fun removeFavorite(wizardId: String)
 
     suspend fun fetchNetworkData(): Result<Unit>
     suspend fun fetchWizardNetworkData(wizardId: String): Result<Unit>

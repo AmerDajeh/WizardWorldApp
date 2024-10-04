@@ -2,4 +2,17 @@
     <string name="app_name">WizardWorldApp</string>
     <string name="elixir_list">Elixir List</string>
     <string name="elixir_details">Elixir Details</string>
+    <string name="elixirs">Elixirs</string>
+    <string name="traits">Traits</string>
+    <string name="favorite">Favorite</string>
+    <string name="go_back">Go Back</string>
+    <string name="item_not_found">Item Not Found</string>
+    <string name="characteristics">Characteristics</string>
+    <string name="difficulty">Difficulty</string>
+    <string name="effect">Effect</string>
+    <string name="side_effects">Side Effects</string>
+    <string name="brewing_time">Brewing Time</string>
+    <string name="manufacturer">Manufacturer</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="inventors">Inventors</string>
 </resources>

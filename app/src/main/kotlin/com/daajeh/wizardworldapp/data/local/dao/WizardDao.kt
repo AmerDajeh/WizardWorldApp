@@ -4,9 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ElixirEntity
 import com.daajeh.wizardworldapp.data.local.dto.wizard.WizardEntity
-import com.daajeh.wizardworldapp.data.local.dto.favourite.FavouriteElixirEntity
 import com.daajeh.wizardworldapp.data.local.dto.favourite.FavouriteWizardEntity
 import kotlinx.coroutines.flow.Flow
 
@@ -16,7 +14,7 @@ interface WizardDao {
     suspend fun insert(wizard: WizardEntity)
 
     @Query("SELECT * FROM wizards WHERE id=:wizardId")
-    fun getWizardById(wizardId: String): Flow<WizardEntity?>
+    fun getById(wizardId: String): Flow<WizardEntity?>
 
     @Query("SELECT * FROM wizards")
     fun getWizards(): Flow<List<WizardEntity>>

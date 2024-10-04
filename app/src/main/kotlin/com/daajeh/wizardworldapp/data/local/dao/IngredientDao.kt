@@ -13,5 +13,5 @@ interface IngredientDao {
     suspend fun insert(ingredient: IngredientEntity)
 
     @Query("SELECT * FROM ingredients WHERE elixirId = :elixirId")
-    fun getIngredientsForElixir(elixirId: String): Flow<List<IngredientEntity>>
+    fun getForElixir(elixirId: String): Flow<List<IngredientEntity>>
 }

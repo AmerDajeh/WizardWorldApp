@@ -11,10 +11,16 @@ import androidx.compose.ui.Modifier
 import com.daajeh.wizardworldapp.presentation.ui.navigation.MainNavGraph
 import com.daajeh.wizardworldapp.presentation.ui.home.WizardsViewModel
 import com.daajeh.wizardworldapp.presentation.ui.theme.WizardWorldAppTheme
+import org.koin.android.scope.AndroidScopeComponent
 import org.koin.androidx.compose.KoinAndroidContext
+import org.koin.androidx.scope.createActivityScope
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.scope.Scope
 
-class MainActivity : ComponentActivity() {
+class MainActivity : ComponentActivity(), AndroidScopeComponent {
+
+    override val scope: Scope
+        get() = createActivityScope()
 
     private val homeViewModel by viewModel<WizardsViewModel>()
 

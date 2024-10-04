@@ -1,6 +1,7 @@
 package com.daajeh.wizardworldapp.presentation.ui.home
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.daajeh.wizardworldapp.data.network.NetworkStatusProvider
 import com.daajeh.wizardworldapp.domain.ElixirRepository
@@ -19,14 +20,13 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.koin.androidx.scope.ScopeViewModel
 
 class WizardsViewModel(
+    private val wizardRepository: WizardRepository,
+    private val elixirRepository: ElixirRepository,
+    private val networkStatusProvider: NetworkStatusProvider,
     private val savedStateHandle: SavedStateHandle
-) : ScopeViewModel() {
-    private val wizardRepository by scope.inject<WizardRepository>()
-    private val elixirRepository by scope.inject<ElixirRepository>()
-    private val networkStatusProvider by scope.inject<NetworkStatusProvider>()
+) : ViewModel() {
 
     val error = MutableStateFlow<String?>(null)
 
@@ -89,7 +89,7 @@ class WizardsViewModel(
             )
 
 
-    fun load(wizardId: String) {
+    fun loadWizard(wizardId: String) {
         viewModelScope.launch {
             savedStateHandle["wizard_id"] = wizardId
         }
@@ -106,11 +106,11 @@ class WizardsViewModel(
             wizard.value?.let { wizard ->
                 when {
                     wizard.isFavorite ->
-                        wizardRepository.removeFavouriteWizard(wizard.id)
+                        wizardRepository.removeFavorite(wizard.id)
 
                     else ->
                         wizardRepository
-                            .saveFavouriteWizard(wizard.id)
+                            .saveFavorite(wizard.id)
                 }
             }
         }
@@ -121,11 +121,11 @@ class WizardsViewModel(
             elixir.value?.let { elixir ->
                 when {
                     elixir.isFavorite ->
-                        elixirRepository.removeFavouriteElixir(elixir.id)
+                        elixirRepository.removeFavorite(elixir.id)
 
                     else ->
                         elixirRepository
-                            .saveFavouriteElixir(elixir.id)
+                            .saveFavourite(elixir.id)
                 }
             }
         }

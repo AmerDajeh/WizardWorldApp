@@ -15,7 +15,7 @@ interface ElixirDao {
     suspend fun insert(elixir: ElixirEntity)
 
     @Query("SELECT * FROM elixirs WHERE id=:elixirId")
-    fun getElixirById(elixirId: String): Flow<ElixirEntity?>
+    fun getById(elixirId: String): Flow<ElixirEntity?>
 
     // light version
     @Insert(onConflict = OnConflictStrategy.REPLACE)

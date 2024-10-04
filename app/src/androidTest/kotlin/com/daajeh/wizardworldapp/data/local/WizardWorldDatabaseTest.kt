@@ -9,6 +9,7 @@ import com.daajeh.wizardworldapp.data.local.dao.InventorDao
 import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ElixirEntity
 import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.ingredient.IngredientEntity
 import com.daajeh.wizardworldapp.data.local.dto.wizard.elixir.inventor.InventorEntity
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -26,6 +27,7 @@ class WizardWorldDatabaseTest {
     // Dummy Data
     private val dummyElixirEntity = ElixirEntity(
         id = "elixir_001",
+        wizardId = "",
         characteristics = "Healing properties",
         difficulty = "Medium",
         effect = "Restores health",
@@ -89,17 +91,17 @@ class WizardWorldDatabaseTest {
         dummyInventors.forEach { inventorDao.insert(it) }
 
         // Retrieve Elixir
-        val retrievedElixir = elixirDao.getElixirById(dummyElixirEntity.id)
-        assert(retrievedElixir == dummyElixirEntity)
+        val retrievedElixir = elixirDao.getById(dummyElixirEntity.id)
+        assert(retrievedElixir.first() == dummyElixirEntity)
 
         // Retrieve Ingredients
-        val retrievedIngredients = ingredientDao.getIngredientsForElixir(dummyElixirEntity.id)
-        assert(retrievedIngredients.size == dummyIngredients.size)
-        assert(retrievedIngredients.containsAll(dummyIngredients))
+        val retrievedIngredients = ingredientDao.getForElixir(dummyElixirEntity.id)
+        assert(retrievedIngredients.first().size == dummyIngredients.size)
+        assert(retrievedIngredients.first().containsAll(dummyIngredients))
 
         // Retrieve Inventors
-        val retrievedInventors = inventorDao.getInventorsForElixir(dummyElixirEntity.id)
-        assert(retrievedInventors.size == dummyInventors.size)
-        assert(retrievedInventors.containsAll(dummyInventors))
+        val retrievedInventors = inventorDao.getForElixir(dummyElixirEntity.id)
+        assert(retrievedInventors.first().size == dummyInventors.size)
+        assert(retrievedInventors.first().containsAll(dummyInventors))
     }
 }

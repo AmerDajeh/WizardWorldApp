@@ -1,4 +1,4 @@
-package com.daajeh.wizardworldapp.presentation.ui.details.sheet
+package com.daajeh.wizardworldapp.presentation.ui.details.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -27,10 +27,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.daajeh.wizardworldapp.R
 import com.daajeh.wizardworldapp.domain.entity.Elixir
 import com.daajeh.wizardworldapp.domain.entity.Ingredient
 import com.daajeh.wizardworldapp.domain.entity.Inventor
@@ -68,7 +70,7 @@ fun ElixirSheet(elixir: Elixir, onFavoriteToggle: () -> Unit) {
                     Icon(
                         painter = if (isFavorite) painterResource(id = android.R.drawable.btn_star_big_on)
                         else painterResource(id = android.R.drawable.btn_star_big_off),
-                        contentDescription = "Favorite",
+                        contentDescription = stringResource(R.string.favorite),
                         tint = if (isFavorite) Color.Yellow else Color.Gray
                     )
                 }
@@ -84,12 +86,12 @@ fun ElixirSheet(elixir: Elixir, onFavoriteToggle: () -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
 
                 // Elixir Details
-                Characteristics(label = "Characteristics", value = elixir.characteristics)
-                ElixirDetailItem(label = "Difficulty", value = elixir.difficulty)
-                ElixirDetailItem(label = "Effect", value = elixir.effect)
-                ElixirDetailItem(label = "Side Effects", value = elixir.sideEffects)
-                ElixirDetailItem(label = "Brewing Time", value = elixir.time)
-                ElixirDetailItem(label = "Manufacturer", value = elixir.manufacturer)
+                Characteristics(label = stringResource(R.string.characteristics), value = elixir.characteristics)
+                ElixirDetailItem(label = stringResource(R.string.difficulty), value = elixir.difficulty)
+                ElixirDetailItem(label = stringResource(R.string.effect), value = elixir.effect)
+                ElixirDetailItem(label = stringResource(R.string.side_effects), value = elixir.sideEffects)
+                ElixirDetailItem(label = stringResource(R.string.brewing_time), value = elixir.time)
+                ElixirDetailItem(label = stringResource(R.string.manufacturer), value = elixir.manufacturer)
             }
         }
         item {
@@ -103,7 +105,7 @@ fun ElixirSheet(elixir: Elixir, onFavoriteToggle: () -> Unit) {
             ) {
                 // Ingredients list
                 Spacer(Modifier.height(8.dp))
-                SectionLabel("Ingredients")
+                SectionLabel(stringResource(R.string.ingredients))
                 Spacer(Modifier.height(8.dp))
                 if (elixir.ingredients.isNotEmpty())
                     elixir.ingredients.forEach { ingredient ->
@@ -125,7 +127,7 @@ fun ElixirSheet(elixir: Elixir, onFavoriteToggle: () -> Unit) {
             ) {
                 Spacer(Modifier.height(8.dp))
                 // Inventors list
-                SectionLabel("Inventors")
+                SectionLabel(stringResource(R.string.inventors))
                 Spacer(Modifier.height(8.dp))
                 if (elixir.inventors.isNotEmpty())
                     elixir.inventors.forEach { inventor ->
@@ -134,6 +136,10 @@ fun ElixirSheet(elixir: Elixir, onFavoriteToggle: () -> Unit) {
                 else
                     NoDataField()
             }
+        }
+
+        item{
+            Spacer(Modifier.height(48.dp))
         }
     }
 }
@@ -165,7 +171,7 @@ fun SectionLabel(
 fun Characteristics(label: String, value: String) {
     val items = remember(value) { value.split(";") }
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-        SectionLabel("Characteristics")
+        SectionLabel(label)
         if (value.isNotBlank())
             FlowRow(
                 modifier = Modifier.fillMaxWidth()

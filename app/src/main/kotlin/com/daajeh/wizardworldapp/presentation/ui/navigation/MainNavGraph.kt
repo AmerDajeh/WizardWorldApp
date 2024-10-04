@@ -38,7 +38,7 @@ fun MainNavGraph(
                 wizards = wizards,  // Use actual data from ViewModel
                 error = error,
                 details = { wizardId ->
-                    viewModel.load(wizardId)
+                    viewModel.loadWizard(wizardId)
                     FetchWizardDataWorker.enqueue(context, wizardId)
                     navController.navigate(Screen.WizardDetails.route)
                 }

@@ -33,7 +33,7 @@ class WizardRepositoryImpl(
 
     override fun getWizardById(wizardId: String): Flow<Wizard?> =
         dao
-            .getWizardById(wizardId)
+            .getById(wizardId)
             .map { nullableWizard ->
                 nullableWizard?.let { wizard ->
                     val elixirs = elixirRepository.getWizardLightElixirs(wizard.id)
@@ -47,16 +47,17 @@ class WizardRepositoryImpl(
                 }
             }
 
-    override suspend fun saveFavouriteWizard(wizardId: String) =
+    override suspend fun saveFavorite(wizardId: String) =
         dao
-            .getWizardById(wizardId)
+            .getById(wizardId)
             .let {
                 val favourite = FavouriteWizardEntity(wizardId)
                 dao
                     .saveFavourite(favourite)
             }
 
-    override suspend fun removeFavouriteWizard(wizardId: String) =
+
+    override suspend fun removeFavorite(wizardId: String) =
         dao
             .removeFavourite(wizardId)
 
@@ -77,7 +78,7 @@ class WizardRepositoryImpl(
     }
 
     override suspend fun fetchWizardNetworkData(wizardId: String): Result<Unit> {
-        val wizard = dao.getWizardById(wizardId).first()
+        val wizard = dao.getById(wizardId).first()
             ?: return Result.failure(RuntimeException("can't find wizard in cache"))
 
         wizard

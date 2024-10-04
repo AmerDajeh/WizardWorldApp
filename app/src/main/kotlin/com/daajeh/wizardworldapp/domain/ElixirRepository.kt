@@ -12,8 +12,8 @@ interface ElixirRepository {
     suspend fun saveWizardLightElixirs(wizardId: String, elixirs: List<LightElixirDto>)
     suspend fun getWizardLightElixirs(wizardId: String): List<LightElixir>
 
-    suspend fun saveFavouriteElixir(elixirId: String)
-    suspend fun removeFavouriteElixir(elixirId: String)
+    suspend fun saveFavourite(elixirId: String)
+    suspend fun removeFavorite(elixirId: String)
 
     suspend fun fetchElixirNetworkData(elixirId: String): Result<Unit>
 }

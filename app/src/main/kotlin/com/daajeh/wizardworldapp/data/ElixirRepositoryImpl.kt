@@ -21,11 +21,11 @@ class ElixirRepositoryImpl(
 ) : ElixirRepository {
 
     override fun getElixirById(elixirId: String): Flow<Elixir?> =
-        dao.getElixirById(elixirId)
-            .combine(ingredientDao.getIngredientsForElixir(elixirId)) { nullableElixir, ingredients ->
+        dao.getById(elixirId)
+            .combine(ingredientDao.getForElixir(elixirId)) { nullableElixir, ingredients ->
                 Pair(nullableElixir, ingredients)
             }
-            .combine(inventorDao.getInventorsForElixir(elixirId)) { (nullableElixir, ingredients), inventors ->
+            .combine(inventorDao.getForElixir(elixirId)) { (nullableElixir, ingredients), inventors ->
                 nullableElixir?.let { entity ->
                     entity.toDomain(
                         ingredients = ingredients.map { it.toDomain() },
@@ -47,21 +47,21 @@ class ElixirRepositoryImpl(
         dao.getLightElixirsForWizard(wizardId)
             .map { it.toDomain() }
 
-    override suspend fun saveFavouriteElixir(elixirId: String) =
-        dao.getElixirById(elixirId)
+    override suspend fun saveFavourite(elixirId: String) =
+        dao.getById(elixirId)
             .let {
                 val favourite = FavouriteElixirEntity(elixirId)
                 dao
                     .saveFavourite(favourite)
             }
 
-    override suspend fun removeFavouriteElixir(elixirId: String) =
+    override suspend fun removeFavorite(elixirId: String) =
         dao
             .removeFavourite(elixirId)
 
     override suspend fun fetchElixirNetworkData(elixirId: String): Result<Unit> {
         try {
-            dao.getElixirById(elixirId).first()
+            dao.getById(elixirId).first()
                 ?.let {
                     return Result.success(Unit)
                 }

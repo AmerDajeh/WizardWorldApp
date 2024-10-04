@@ -3,7 +3,7 @@ package com.daajeh.wizardworldapp.di
 import android.util.Log
 import com.daajeh.wizardworldapp.data.network.WizardWorldApi
 import com.daajeh.wizardworldapp.data.network.httpResponseValidator
-import com.daajeh.wizardworldapp.presentation.ui.home.WizardsViewModel
+import com.daajeh.wizardworldapp.presentation.MainActivity
 import com.daajeh.wizardworldapp.work.FetchElixirDataWorker
 import com.daajeh.wizardworldapp.work.FetchWizardDataWorker
 import com.daajeh.wizardworldapp.work.UpdateDataWorker
@@ -74,7 +74,7 @@ val networkModule = module {
         }
     }
 
-    scope<WizardsViewModel> {
+    scope<MainActivity> {
         scoped {
             createHttpClient()
         }
