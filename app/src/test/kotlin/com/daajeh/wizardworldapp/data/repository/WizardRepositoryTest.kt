@@ -78,7 +78,6 @@ class WizardRepositoryTest {
         coEvery { mockkDao.isFavourite(any()) } returns true
 
         wizardRepository = WizardRepositoryImpl(
-            api = mockkApi,
             dao = mockkDao,
             elixirRepository = mockkElixirRepository
         )
@@ -103,7 +102,6 @@ class WizardRepositoryTest {
         coEvery { mockkDao.isFavourite(any()) } returns true
 
         wizardRepository = WizardRepositoryImpl(
-            api = mockkApi,
             dao = mockkDao,
             elixirRepository = mockkElixirRepository
         )
@@ -127,7 +125,6 @@ class WizardRepositoryTest {
         coEvery { mockkDao.saveFavourite(FavouriteWizardEntity(wizard.id)) } just Runs
 
         wizardRepository = WizardRepositoryImpl(
-            api = mockkApi,
             dao = mockkDao,
             elixirRepository = mockkElixirRepository
         )
@@ -145,7 +142,6 @@ class WizardRepositoryTest {
         coEvery { mockkDao.removeFavourite(wizard.id) } just Runs
 
         wizardRepository = WizardRepositoryImpl(
-            api = mockkApi,
             dao = mockkDao,
             elixirRepository = mockkElixirRepository
         )
