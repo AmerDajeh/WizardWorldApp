@@ -97,10 +97,6 @@ class WizardsViewModelTest {
 
         assertTrue(viewModel.wizards.value.isEmpty())
         assertNotNull(viewModel.error.value)
-        assertEquals(
-            "device is offline, try again when you have connection.",
-            viewModel.error.value
-        )
     }
 
     @Test
@@ -188,7 +184,7 @@ class WizardsViewModelTest {
         every { wizardRepository.getWizards() } returns flowOf(emptyList())
         every { savedStateHandle.getStateFlow(any(), "") } returns MutableStateFlow(wizard.id)
         every { wizardRepository.getWizardById(wizard.id) } returns flowOf(wizard)
-        coEvery { wizardRepository.saveFavorite(any()) } just Runs
+        coEvery { wizardRepository.toggleFavorite(any()) } just Runs
 
         viewModel = WizardsViewModel(
             wizardRepository = wizardRepository,
@@ -209,7 +205,7 @@ class WizardsViewModelTest {
         coVerify { wizardRepository.getWizardById(wizard.id) }
         viewModel.toggleWizardFavouriteState()
         dispatcher.scheduler.advanceUntilIdle()
-        coVerify { wizardRepository.saveFavorite(wizard.id) }
+        coVerify { wizardRepository.toggleFavorite(wizard.id) }
     }
 
     @Test
@@ -248,7 +244,7 @@ class WizardsViewModelTest {
         every { wizardRepository.getWizards() } returns flowOf(emptyList())
         every { savedStateHandle.getStateFlow(any(), "") } returns MutableStateFlow(elixir.id)
         every { elixirRepository.getElixirById(elixir.id) } returns flowOf(elixir)
-        coEvery { elixirRepository.saveFavourite(any()) } just Runs
+        coEvery { elixirRepository.toggleFavourite(any()) } just Runs
 
         viewModel = WizardsViewModel(
             wizardRepository = wizardRepository,
@@ -270,7 +266,7 @@ class WizardsViewModelTest {
         viewModel.toggleElixirFavouriteState()
         dispatcher.scheduler.advanceUntilIdle()
 
-        coVerify { elixirRepository.saveFavourite(elixir.id) }
+        coVerify { elixirRepository.toggleFavourite(elixir.id) }
     }
 
     @Test

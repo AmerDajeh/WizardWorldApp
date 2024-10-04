@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 
 class ElixirRepositoryImpl(
-    private val api: WizardWorldApi,
+//    private val api: WizardWorldApi,
     private val dao: ElixirDao,
     private val ingredientDao: IngredientDao,
     private val inventorDao: InventorDao
@@ -47,12 +47,17 @@ class ElixirRepositoryImpl(
         dao.getLightElixirsForWizard(wizardId)
             .map { it.toDomain() }
 
-    override suspend fun saveFavourite(elixirId: String) =
+    override suspend fun toggleFavourite(elixirId: String) =
         dao.getById(elixirId)
             .let {
-                val favourite = FavouriteElixirEntity(elixirId)
-                dao
-                    .saveFavourite(favourite)
+                val isFavorite = dao.isFavourite(elixirId)
+                if (isFavorite)
+                    dao.removeFavourite(elixirId)
+                else {
+                    val favourite = FavouriteElixirEntity(elixirId)
+                    dao
+                        .saveFavourite(favourite)
+                }
             }
 
     override suspend fun removeFavorite(elixirId: String) =
@@ -60,31 +65,32 @@ class ElixirRepositoryImpl(
             .removeFavourite(elixirId)
 
     override suspend fun fetchElixirNetworkData(elixirId: String): Result<Unit> {
-        try {
-            dao.getById(elixirId).first()
-                ?.let {
-                    return Result.success(Unit)
-                }
-
-            val localLightElixir = dao.getLightElixirById(elixirId)
-                ?: throw RuntimeException("$TAG: can't find light version")
-
-            val remoteData = api.getElixirDetails(elixirId)
-            val entity = remoteData.toEntity(localLightElixir.wizardId)
-            dao.insert(entity)
-
-            val ingredients = remoteData.ingredients
-                .map { it.toEntity(elixirId) }
-            val inventors = remoteData.inventors
-                .map { it.toEntity(elixirId) }
-
-            ingredients.forEach { ingredientDao.insert(it) }
-            inventors.forEach { inventorDao.insert(it) }
-
-            return Result.success(Unit)
-        } catch (e: Exception) {
-           return Result.failure(e)
-        }
+        TODO()
+//        try {
+//            dao.getById(elixirId).first()
+//                ?.let {
+//                    return Result.success(Unit)
+//                }
+//
+//            val localLightElixir = dao.getLightElixirById(elixirId)
+//                ?: throw RuntimeException("$TAG: can't find light version")
+//
+//            val remoteData = api.getElixirDetails(elixirId)
+//            val entity = remoteData.toEntity(localLightElixir.wizardId)
+//            dao.insert(entity)
+//
+//            val ingredients = remoteData.ingredients
+//                .map { it.toEntity(elixirId) }
+//            val inventors = remoteData.inventors
+//                .map { it.toEntity(elixirId) }
+//
+//            ingredients.forEach { ingredientDao.insert(it) }
+//            inventors.forEach { inventorDao.insert(it) }
+//
+//            return Result.success(Unit)
+//        } catch (e: Exception) {
+//            return Result.failure(e)
+//        }
     }
 
     companion object {

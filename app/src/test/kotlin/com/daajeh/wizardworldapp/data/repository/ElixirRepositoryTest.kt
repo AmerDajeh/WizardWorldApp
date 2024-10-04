@@ -1,7 +1,6 @@
 package com.daajeh.wizardworldapp.data.repository
 
 import com.daajeh.wizardworldapp.data.ElixirRepositoryImpl
-import com.daajeh.wizardworldapp.data.WizardRepositoryImpl
 import com.daajeh.wizardworldapp.data.local.dao.ElixirDao
 import com.daajeh.wizardworldapp.data.local.dao.IngredientDao
 import com.daajeh.wizardworldapp.data.local.dao.InventorDao
@@ -101,7 +100,7 @@ class ElixirRepositoryTest {
             inventorDao = mockkInventorDao
         )
 
-        elixirRepository.saveFavourite(elixir.id)
+        elixirRepository.toggleFavourite(elixir.id)
 
         coVerify(exactly = 1) { mockkElixirDao.getById(elixir.id) }
         coVerify(exactly = 1) { mockkElixirDao.saveFavourite(any()) }

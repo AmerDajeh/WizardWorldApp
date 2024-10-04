@@ -10,9 +10,13 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.daajeh.wizardworldapp.domain.ElixirRepository
+import com.daajeh.wizardworldapp.data.local.dao.ElixirDao
+import com.daajeh.wizardworldapp.data.local.dao.IngredientDao
+import com.daajeh.wizardworldapp.data.local.dao.InventorDao
+import com.daajeh.wizardworldapp.data.network.WizardWorldApi
+import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinScopeComponent
-import org.koin.core.component.createScope
+import org.koin.core.component.getOrCreateScope
 import org.koin.core.scope.Scope
 
 class FetchElixirDataWorker(
@@ -20,18 +24,37 @@ class FetchElixirDataWorker(
     private val parameters: WorkerParameters
 ) : CoroutineWorker(context, parameters), KoinScopeComponent {
 
-    override val scope: Scope
-        get() = createScope()
+    override val scope: Scope by getOrCreateScope()
 
-    private val elixirRepository by scope.inject<ElixirRepository>()
+    private val dao by scope.inject<ElixirDao>()
+    private val ingredientDao by scope.inject<IngredientDao>()
+    private val inventorDao by scope.inject<InventorDao>()
+    private val api by scope.inject<WizardWorldApi>()
 
     override suspend fun doWork(): Result {
         try {
             val elixirId = parameters.inputData.getString(ELIXIR_ID_PARAMETER_NAME)
                 ?: return Result.failure(workDataOf("message" to "can't find wizard id."))
 
-            elixirRepository.fetchElixirNetworkData(elixirId)
-                .onFailure { throw it }
+            dao.getById(elixirId).first()
+                ?.let {
+                    return Result.success(workDataOf())
+                }
+
+            val localLightElixir = dao.getLightElixirById(elixirId)
+                ?: throw RuntimeException("$NAME: can't find light version")
+
+            val remoteData = api.getElixirDetails(elixirId)
+            val entity = remoteData.toEntity(localLightElixir.wizardId)
+            dao.insert(entity)
+
+            val ingredients = remoteData.ingredients
+                .map { it.toEntity(elixirId) }
+            val inventors = remoteData.inventors
+                .map { it.toEntity(elixirId) }
+
+            ingredients.forEach { ingredientDao.insert(it) }
+            inventors.forEach { inventorDao.insert(it) }
 
             return Result.success(workDataOf("message" to "successfully fetched elixir data"))
         } catch (e: Exception) {

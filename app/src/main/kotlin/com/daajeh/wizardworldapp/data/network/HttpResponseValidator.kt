@@ -14,7 +14,7 @@ import kotlinx.io.IOException
 
 fun HttpClientConfig<*>.httpResponseValidator() {
     install(HttpRequestRetry) {
-        maxRetries = 5 // Set the maximum number of retries
+        maxRetries = 3 // Set the maximum number of retries
 
         retryIf { _, response ->
             // Retry only for transient server errors (not 5xx) or network issues

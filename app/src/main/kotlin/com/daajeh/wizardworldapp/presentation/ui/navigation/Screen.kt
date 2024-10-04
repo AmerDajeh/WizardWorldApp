@@ -9,4 +9,7 @@ sealed class Screen(val route: String) {
 
     @Serializable
     data object WizardDetails : Screen("elixirDetails")
+
+    @Serializable
+    data object ElixirSheet : Screen("elixirSheet")
 }

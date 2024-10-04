@@ -2,16 +2,13 @@ package com.daajeh.wizardworldapp.data
 
 import com.daajeh.wizardworldapp.data.local.dao.WizardDao
 import com.daajeh.wizardworldapp.data.local.dto.favourite.FavouriteWizardEntity
-import com.daajeh.wizardworldapp.data.network.WizardWorldApi
 import com.daajeh.wizardworldapp.domain.ElixirRepository
 import com.daajeh.wizardworldapp.domain.WizardRepository
 import com.daajeh.wizardworldapp.domain.entity.Wizard
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class WizardRepositoryImpl(
-    private val api: WizardWorldApi,
     private val dao: WizardDao,
     private val elixirRepository: ElixirRepository,
 ) : WizardRepository {
@@ -47,47 +44,22 @@ class WizardRepositoryImpl(
                 }
             }
 
-    override suspend fun saveFavorite(wizardId: String) =
+    override suspend fun toggleFavorite(wizardId: String) =
         dao
             .getById(wizardId)
             .let {
-                val favourite = FavouriteWizardEntity(wizardId)
-                dao
-                    .saveFavourite(favourite)
+                val isFavorite = dao.isFavourite(wizardId)
+                if (isFavorite)
+                    dao.removeFavourite(wizardId)
+                else {
+                    val favourite = FavouriteWizardEntity(wizardId)
+                    dao
+                        .saveFavourite(favourite)
+                }
             }
 
 
     override suspend fun removeFavorite(wizardId: String) =
         dao
             .removeFavourite(wizardId)
-
-    override suspend fun fetchNetworkData(): Result<Unit> {
-        // todo: enhance
-        return if (dao.getWizards().first().isEmpty()) {
-            api
-                .getWizards()
-                .onSuccess {
-                    it.forEach { wizard ->
-                        dao.insert(wizard.toEntity())
-                        elixirRepository.saveWizardLightElixirs(wizard.id, wizard.elixirs)
-                    }
-                }
-            return Result.success(Unit)
-        } else
-            Result.success(Unit)
-    }
-
-    override suspend fun fetchWizardNetworkData(wizardId: String): Result<Unit> {
-        val wizard = dao.getById(wizardId).first()
-            ?: return Result.failure(RuntimeException("can't find wizard in cache"))
-
-        wizard
-            .toDomain(
-                elixirs = elixirRepository.getWizardLightElixirs(wizardId),
-                isFavourite = dao.isFavourite(wizardId)
-            )
-
-        // todo
-        return Result.success(Unit)
-    }
 }

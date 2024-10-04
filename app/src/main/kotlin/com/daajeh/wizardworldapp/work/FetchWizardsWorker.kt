@@ -9,40 +9,53 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.daajeh.wizardworldapp.data.local.dao.WizardDao
+import com.daajeh.wizardworldapp.data.network.WizardWorldApi
 import com.daajeh.wizardworldapp.domain.ElixirRepository
-import com.daajeh.wizardworldapp.domain.WizardRepository
+import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinScopeComponent
-import org.koin.core.component.createScope
+import org.koin.core.component.getOrCreateScope
 import org.koin.core.scope.Scope
 
-class UpdateDataWorker(
+class FetchWizardsWorker(
     context: Context,
     parameters: WorkerParameters
-): CoroutineWorker(context, parameters), KoinScopeComponent {
+) : CoroutineWorker(context, parameters), KoinScopeComponent {
 
-    override val scope: Scope
-        get() = createScope()
+    override val scope: Scope by getOrCreateScope()
 
-    private val wizardRepository by scope.inject<WizardRepository>()
+    private val wizardDao by scope.inject<WizardDao>()
+    private val api by scope.inject<WizardWorldApi>()
+    private val elixirRepository by scope.inject<ElixirRepository>()
 
     override suspend fun doWork(): Result =
         try {
-            wizardRepository.fetchNetworkData()
-               .onFailure { throw it }
+            if (wizardDao.getWizards().first().isEmpty()) {
+                api
+                    .getWizards()
+                    .onSuccess {
+                        it.forEach { wizard ->
+                            wizardDao.insert(wizard.toEntity())
+                            elixirRepository.saveWizardLightElixirs(wizard.id, wizard.elixirs)
+                        }
+                    }
+                Result.success(workDataOf())
+            } else
+                kotlin.Result.success(Unit)
             Result.success(workDataOf("message" to "successfully update the cache"))
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Result.failure(workDataOf("message" to (e.message ?: "something went wrong")))
         }
 
 
     companion object {
-        private const val NAME = "UpdateDataWorker"
+        private const val NAME = "FetchWizardsWorker"
         fun enqueue(context: Context) {
             val constraint = Constraints.Builder()
                 .apply { setRequiredNetworkType(NetworkType.CONNECTED) }
                 .build()
 
-            val request = OneTimeWorkRequest.Builder(UpdateDataWorker::class.java)
+            val request = OneTimeWorkRequest.Builder(FetchWizardsWorker::class.java)
                 .setConstraints(constraint)
 
             WorkManager.getInstance(context)

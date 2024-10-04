@@ -4,7 +4,7 @@ import android.app.Application
 import com.daajeh.wizardworldapp.di.appModule
 import com.daajeh.wizardworldapp.di.networkModule
 import com.daajeh.wizardworldapp.di.workModule
-import com.daajeh.wizardworldapp.work.UpdateDataWorker
+import com.daajeh.wizardworldapp.work.FetchWizardsWorker
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
@@ -24,6 +24,6 @@ class WizardWorldApp: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        UpdateDataWorker.enqueue(this)
+        FetchWizardsWorker.enqueue(this)
     }
 }

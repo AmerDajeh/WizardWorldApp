@@ -6,8 +6,7 @@ import com.daajeh.wizardworldapp.data.local.WizardWorldDatabase
 import com.daajeh.wizardworldapp.domain.ElixirRepository
 import com.daajeh.wizardworldapp.domain.WizardRepository
 import com.daajeh.wizardworldapp.work.FetchElixirDataWorker
-import com.daajeh.wizardworldapp.work.FetchWizardDataWorker
-import com.daajeh.wizardworldapp.work.UpdateDataWorker
+import com.daajeh.wizardworldapp.work.FetchWizardsWorker
 import org.koin.androidx.workmanager.dsl.workerOf
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.scopedOf
@@ -15,41 +14,10 @@ import org.koin.dsl.module
 
 val workModule = module {
 
-    workerOf(::UpdateDataWorker)
-    workerOf(::FetchWizardDataWorker)
+    workerOf(::FetchWizardsWorker)
     workerOf(::FetchElixirDataWorker)
 
-    scope<UpdateDataWorker> {
-        scoped {
-            val database: WizardWorldDatabase = get()
-            database.wizardDao()
-        }
-
-        scoped {
-            val database: WizardWorldDatabase = get()
-            database.elixirDao()
-        }
-
-        scoped {
-            val database: WizardWorldDatabase = get()
-            database.ingredientDao()
-        }
-
-        scoped {
-            val database: WizardWorldDatabase = get()
-            database.inventorDao()
-        }
-
-        scopedOf(::WizardRepositoryImpl) {
-            bind<WizardRepository>()
-        }
-
-        scopedOf(::ElixirRepositoryImpl) {
-            bind<ElixirRepository>()
-        }
-    }
-
-    scope<FetchWizardDataWorker> {
+    scope<FetchWizardsWorker> {
         scoped {
             val database: WizardWorldDatabase = get()
             database.wizardDao()

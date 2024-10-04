@@ -132,7 +132,7 @@ class WizardRepositoryTest {
             elixirRepository = mockkElixirRepository
         )
 
-        wizardRepository.saveFavorite(wizard.id)
+        wizardRepository.toggleFavorite(wizard.id)
 
         coVerify { mockkDao.getById(wizard.id) }
         coVerify(exactly = 1) { mockkDao.saveFavourite(any()) }

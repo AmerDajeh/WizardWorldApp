@@ -5,8 +5,7 @@ import com.daajeh.wizardworldapp.data.network.WizardWorldApi
 import com.daajeh.wizardworldapp.data.network.httpResponseValidator
 import com.daajeh.wizardworldapp.presentation.MainActivity
 import com.daajeh.wizardworldapp.work.FetchElixirDataWorker
-import com.daajeh.wizardworldapp.work.FetchWizardDataWorker
-import com.daajeh.wizardworldapp.work.UpdateDataWorker
+import com.daajeh.wizardworldapp.work.FetchWizardsWorker
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.DefaultRequest
@@ -81,14 +80,7 @@ val networkModule = module {
         scopedOf(::WizardWorldApi)
     }
 
-    scope<UpdateDataWorker> {
-        scoped {
-            createHttpClient()
-        }
-        scopedOf(::WizardWorldApi)
-    }
-
-    scope<FetchWizardDataWorker> {
+    scope<FetchWizardsWorker> {
         scoped {
             createHttpClient()
         }

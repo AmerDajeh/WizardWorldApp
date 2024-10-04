@@ -22,8 +22,6 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
     override val scope: Scope
         get() = createActivityScope()
 
-    private val homeViewModel by viewModel<WizardsViewModel>()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -32,8 +30,7 @@ class MainActivity : ComponentActivity(), AndroidScopeComponent {
                 WizardWorldAppTheme {
                     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                         MainNavGraph(
-                            modifier = Modifier.padding(innerPadding),
-                            viewModel = homeViewModel
+                            modifier = Modifier.padding(innerPadding)
                         )
                     }
                 }
