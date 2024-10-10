@@ -15,13 +15,14 @@ import com.daajeh.wizardworldapp.presentation.ui.sheet.ElixirBottomSheetViewMode
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.scopedOf
 import org.koin.core.module.dsl.viewModelOf
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val appModule = module {
     single { provideDatabase(get()) }
 
 
-    scope<MainActivity> {
+    scope(named("MainActivityScope")) {
         scopedOf(::NetworkStatusProvider)
 
         scoped {

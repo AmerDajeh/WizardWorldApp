@@ -27,6 +27,7 @@ import com.daajeh.wizardworldapp.presentation.ui.sheet.ElixirBottomSheet
 import com.daajeh.wizardworldapp.presentation.ui.sheet.ElixirBottomSheetViewModel
 import com.daajeh.wizardworldapp.work.FetchElixirDataWorker
 import org.koin.androidx.compose.koinViewModel
+import org.koin.compose.getKoin
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
@@ -38,6 +39,8 @@ fun MainNavGraph(
     val context = LocalContext.current
     val navController =
         rememberNavController()
+
+    val koin = getKoin()
 
     SharedTransitionLayout {
         NavHost(
@@ -62,7 +65,7 @@ fun MainNavGraph(
             }
 
             composable(Screen.WizardDetails.route.plus("/{wizardId}")) {
-                val viewModel: WizardDetailsViewModel = koinViewModel<WizardDetailsViewModel>(scope = mainActivity.scope)
+                val viewModel: WizardDetailsViewModel = koinViewModel<WizardDetailsViewModel>(scope = koin.getScope("MainActivityScope"))
 
                 val wizard by viewModel.wizard.collectAsStateWithLifecycle()
 
